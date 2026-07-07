@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Raven's Tarot Reader</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
+
 <body>
   <h1>Welcome, reader</h1>
-  <p>Enter your cards below, and we'll assemble keywords, patterns, and connections to help YOU read, rather than doing it for you.</p>
+
+  <p>
+    Enter your cards below, and we'll assemble keywords, patterns, and connections
+    to help YOU read, rather than doing it for you.
+  </p>
 
   <label for="cardName">Card:</label>
   <input id="cardName" placeholder="Example: Eight of Wands">
@@ -29,7 +34,7 @@
       const reading = document.getElementById("reading");
 
       reading.innerHTML += `
-        <div>
+        <div class="card-entry">
           <h2>${cardName} (${orientation})</h2>
           <p>Keywords will go here.</p>
         </div>
@@ -37,9 +42,6 @@
 
       document.getElementById("cardName").value = "";
     }
-  function addCard() {
-    alert("Button works!");
-  }
-</script>
+  </script>
 </body>
 </html>
