@@ -857,7 +857,7 @@
 }
 
 const cardAliases = createCardAliases();
-}
+
    function addCard() {
       const cardName = document.getElementById("cardName").value;
       const orientation = document.getElementById("orientation").value;
@@ -871,9 +871,6 @@ const cardAliases = createCardAliases();
   alert("Oh shit, I don't know that one. Try again?");
   return;
 }
-
-
-});
 
 const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
 
@@ -891,10 +888,12 @@ reading.innerHTML += `
       document.getElementById("cardName").value = "";
     }
 
-    document.getElementById("cardName").addEventListener("keydown", function(event) { 
-  if (event.key === "Enter") {
-    addCard();
-  }
+      document.getElementById("cardName").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addCard();
+      }
+    });
   </script>
 </body>
 </html>
