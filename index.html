@@ -1057,11 +1057,12 @@ const currentReading = [];
 }
 
 const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
+const imageClass = orientation === "reversed" ? "card-image reversed-card-image" : "card-image";
 
 reading.innerHTML += `
   <div class="card-entry">
     <div class="card-image-wrap">
-      <img class="card-image ${orientation === "reversed" ? "reversed-card-image" : ""}" src="${card.image}" alt="${matchingCardName}">
+      <img class="${imageClass}" src="${card.image}" alt="${matchingCardName}">
     </div>
 
     <div class="card-text">
