@@ -1,0 +1,31 @@
+style.css
+body {
+  font-family: Georgia, serif;
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #16131d;
+  color: #f4edf8;
+}
+
+input,
+select,
+button,
+textarea {
+  display: block;
+  width: 100%;
+  margin: 8px 0 16px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+.card-entry {
+  border: 1px solid #6d5a7c;
+  padding: 16px;
+  margin-top: 16px;
+  border-radius: 8px;
+}
