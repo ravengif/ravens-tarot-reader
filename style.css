@@ -40,11 +40,11 @@ button {
 }
 
 .entry-area input {
-  width: 220px;
+  width: auto;
 }
 
 .entry-area select {
-  width: 130px;
+  width: auto;
 }
 
 .entry-area button {
