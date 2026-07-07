@@ -1060,14 +1060,19 @@ const orientationKeywords = orientation === "upright" ? card.upright : card.reve
 
 reading.innerHTML += `
   <div class="card-entry">
-    <h2>${matchingCardName} (${orientation})</h2>
-    <img class="card-image" src="${card.image}" alt="${matchingCardName}">
-    <p><strong>Description:</strong> ${card.description}</p>
-    <p><strong>Suit:</strong> ${card.suit}</p>
-    <p><strong>Element:</strong> ${card.element}</p>
-    <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
-    <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
-    <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+    <div class="card-image-wrap">
+      <img class="card-image" src="${card.image}" alt="${matchingCardName}">
+    </div>
+
+    <div class="card-text">
+      <h2>${matchingCardName} (${orientation})</h2>
+      <p><strong>Description:</strong> ${card.description}</p>
+      <p><strong>Suit:</strong> ${card.suit}</p>
+      <p><strong>Element:</strong> ${card.element}</p>
+      <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
+      <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
+      <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+    </div>
   </div>
 `;
 
