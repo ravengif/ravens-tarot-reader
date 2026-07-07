@@ -1061,7 +1061,7 @@ const orientationKeywords = orientation === "upright" ? card.upright : card.reve
 reading.innerHTML += `
   <div class="card-entry">
     <div class="card-image-wrap">
-      <img class="card-image" src="${card.image}" alt="${matchingCardName}">
+      <img class="card-image ${orientation === "reversed" ? "reversed-card-image" : ""}" src="${card.image}" alt="${matchingCardName}">
     </div>
 
     <div class="card-text">
