@@ -153,6 +153,6 @@ button {
 .card-text p {
   margin: 0 0 8px;
 }
-.reversed-card-image {
+.card-image.reversed-card-image {
   transform: rotate(180deg);
 }
