@@ -734,36 +734,155 @@
     function normalizeText(text) {
   return text
     .toLowerCase()
-    .trim();
+    .trim()
+    .replace(/\s+/g, " ");
+
+      function createCardAliases() {
+  const aliases = {};
+
+  const numberWords = {
+    "ace": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9",
+    "ten": "10"
+  };
+
+  Object.keys(tarotCards).forEach(function(cardName) {
+    const normalizedName = normalizeText(cardName);
+
+    // Always include the exact normalized name.
+    aliases[normalizedName] = cardName;
+
+    // Major Arcana with "The" removed.
+    if (normalizedName.startsWith("the ")) {
+      const withoutThe = normalizedName.replace("the ", "");
+      aliases[withoutThe] = cardName;
+    }
+
+    // Alternate spelling.
+    if (normalizedName === "judgment") {
+      aliases["judgement"] = cardName;
+    }
+
+    // Wheel of Fortune shortcuts.
+    if (normalizedName === "wheel of fortune") {
+      aliases["wheel fortune"] = cardName;
+      aliases["the wheel"] = cardName;
+      aliases["wheel"] = cardName;
+    }
+
+    // Hanged Man shortcuts.
+    if (normalizedName === "the hanged man") {
+      aliases["hanged man"] = cardName;
+      aliases["the hanged one"] = cardName;
+      aliases["hanged one"] = cardName;
+    }
+
+    // Minor Arcana number aliases.
+    Object.keys(numberWords).forEach(function(wordNumber) {
+      const digitNumber = numberWords[wordNumber];
+
+      if (normalizedName.startsWith(wordNumber + " of ")) {
+        const suit = normalizedName.replace(wordNumber + " of ", "");
+
+        aliases[`${digitNumber} of ${suit}`] = cardName;
+        aliases[`${wordNumber} ${suit}`] = cardName;
+        aliases[`${digitNumber} ${suit}`] = cardName;
+        aliases[`${suit} ${wordNumber}`] = cardName;
+        aliases[`${suit} ${digitNumber}`] = cardName;
+
+        // Singular suit versions.
+        if (suit.endsWith("s")) {
+          const singularSuit = suit.slice(0, -1);
+
+          aliases[`${wordNumber} of ${singularSuit}`] = cardName;
+          aliases[`${digitNumber} of ${singularSuit}`] = cardName;
+          aliases[`${wordNumber} ${singularSuit}`] = cardName;
+          aliases[`${digitNumber} ${singularSuit}`] = cardName;
+          aliases[`${singularSuit} ${wordNumber}`] = cardName;
+          aliases[`${singularSuit} ${digitNumber}`] = cardName;
+        }
+      }
+    });
+
+    // Court card shortcuts.
+    const courtTitles = ["page", "knight", "queen", "king"];
+
+    courtTitles.forEach(function(courtTitle) {
+      if (normalizedName.startsWith(courtTitle + " of ")) {
+        const suit = normalizedName.replace(courtTitle + " of ", "");
+
+        aliases[`${courtTitle} ${suit}`] = cardName;
+        aliases[`${suit} ${courtTitle}`] = cardName;
+
+        if (suit.endsWith("s")) {
+          const singularSuit = suit.slice(0, -1);
+
+          aliases[`${courtTitle} of ${singularSuit}`] = cardName;
+          aliases[`${courtTitle} ${singularSuit}`] = cardName;
+          aliases[`${singularSuit} ${courtTitle}`] = cardName;
+        }
+      }
+    });
+
+    // Ace shortcuts.
+    if (normalizedName.startsWith("ace of ")) {
+      const suit = normalizedName.replace("ace of ", "");
+
+      aliases[`1 of ${suit}`] = cardName;
+      aliases[`1 ${suit}`] = cardName;
+      aliases[`ace ${suit}`] = cardName;
+      aliases[`${suit} ace`] = cardName;
+
+      if (suit.endsWith("s")) {
+        const singularSuit = suit.slice(0, -1);
+
+        aliases[`ace of ${singularSuit}`] = cardName;
+        aliases[`1 of ${singularSuit}`] = cardName;
+        aliases[`1 ${singularSuit}`] = cardName;
+        aliases[`ace ${singularSuit}`] = cardName;
+        aliases[`${singularSuit} ace`] = cardName;
+      }
+    }
+  });
+
+  return aliases;
+}
+
+const cardAliases = createCardAliases();
 }
    function addCard() {
       const cardName = document.getElementById("cardName").value;
       const orientation = document.getElementById("orientation").value;
       const reading = document.getElementById("reading");
 
-      const card = tarotCards[cardName];
+     const normalizedInput = normalizeText(cardName);
+     const matchingCardName = cardAliases[normalizedInput];
+     const card = tarotCards[matchingCardName];
 
       if (!card) {
-        reading.innerHTML += `
-          <div class="card-entry">
-            <h2>${cardName} (${orientation})</h2>
-            <p>No keywords saved for this card yet.</p>
-          </div>
-        `;
-      } else {
-        const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
+  alert("Oh shit, I don't know that one. Try again?");
+  return;
+}
 
-        reading.innerHTML += `
-          <div class="card-entry">
-            <h2>${cardName} (${orientation})</h2>
-            <p><strong>Suit:</strong> ${card.suit}</p>
-            <p><strong>Element:</strong> ${card.element}</p>
-            <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
-            <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
-            <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
-          </div>
-        `;
-      }
+const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
+
+reading.innerHTML += `
+  <div class="card-entry">
+    <h2>${matchingCardName} (${orientation})</h2>
+    <p><strong>Suit:</strong> ${card.suit}</p>
+    <p><strong>Element:</strong> ${card.element}</p>
+    <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
+    <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
+    <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+  </div>
+`;
 
       document.getElementById("cardName").value = "";
     }
