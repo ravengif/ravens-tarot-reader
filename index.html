@@ -731,6 +731,11 @@
     reversed: ["greed", "control", "instability", "status obsession"]
   }
 };
+    function normalizeText(text) {
+  return text
+    .toLowerCase()
+    .trim();
+}
    function addCard() {
       const cardName = document.getElementById("cardName").value;
       const orientation = document.getElementById("orientation").value;
