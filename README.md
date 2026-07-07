@@ -6,12 +6,12 @@
  1. List all of the cards pulled in a session
  2. Account for common aliases (8 vs eight, etc)
  3. Count elements, card types, etc to log under "Patterns"
- 4. Display basic card info (keywords, elements, astrology, etc)
+ 4. Display basic card info (keywords, elements, astrology, etc) as well as card art (upright and reversed)
 
   <h4>COMING SOON</h4>
 
 1. More detailed descriptions per card
-2. Card images
+2. Custom card images
 3. Custom UI
 4. Memory
 5. More detailed pattern notes (lots of fire energy / XYZ)
