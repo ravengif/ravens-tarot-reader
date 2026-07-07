@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Raven's Tarot Reader</title>
+</head>
+<body>
+  <h1>Welcome, reader</h1>
+  <p>Enter your cards below, and we'll assemble keywords, patterns, and connections to help YOU read, rather than doing it for you.</p>
+
+  <label for="cardName">Card:</label>
+  <input id="cardName" placeholder="Example: Eight of Wands">
+
+  <label for="orientation">Orientation:</label>
+  <select id="orientation">
+    <option value="upright">Upright</option>
+    <option value="reversed">Reversed</option>
+  </select>
+
+  <button onclick="addCard()">Add Card</button>
+
+  <div id="reading"></div>
+
+  <script>
+    function addCard() {
+      const cardName = document.getElementById("cardName").value;
+      const orientation = document.getElementById("orientation").value;
+      const reading = document.getElementById("reading");
+
+      reading.innerHTML += `
+        <div>
+          <h2>${cardName} (${orientation})</h2>
+          <p>Keywords will go here.</p>
+        </div>
+      `;
+
+      document.getElementById("cardName").value = "";
+    }
+  </script>
+</body>
+</html>
