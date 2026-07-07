@@ -42,13 +42,13 @@ button {
 .entry-area input {
   width: auto;
   min-width: 600px;
-  min-height: 120px;
+  min-height: 60px;
 }
 
 .entry-area select {
   width: auto;
   min-width: 600px;
-  min-height: 120px;
+  min-height: 60px;
 }
 
 .entry-area button {
