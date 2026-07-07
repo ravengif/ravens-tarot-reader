@@ -731,17 +731,34 @@
     reversed: ["greed", "control", "instability", "status obsession"]
   }
 };
-    function addCard() {
+   function addCard() {
       const cardName = document.getElementById("cardName").value;
       const orientation = document.getElementById("orientation").value;
       const reading = document.getElementById("reading");
 
-      reading.innerHTML += `
-        <div class="card-entry">
-          <h2>${cardName} (${orientation})</h2>
-          <p>Keywords will go here.</p>
-        </div>
-      `;
+      const card = tarotCards[cardName];
+
+      if (!card) {
+        reading.innerHTML += `
+          <div class="card-entry">
+            <h2>${cardName} (${orientation})</h2>
+            <p>No keywords saved for this card yet.</p>
+          </div>
+        `;
+      } else {
+        const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
+
+        reading.innerHTML += `
+          <div class="card-entry">
+            <h2>${cardName} (${orientation})</h2>
+            <p><strong>Suit:</strong> ${card.suit}</p>
+            <p><strong>Element:</strong> ${card.element}</p>
+            <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
+            <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
+            <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+          </div>
+        `;
+      }
 
       document.getElementById("cardName").value = "";
     }
