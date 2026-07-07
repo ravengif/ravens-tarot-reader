@@ -125,6 +125,18 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .entry-area {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .entry-area input,
+  .entry-area select,
+  .entry-area button {
+    width: 100%;
+  }
+}
+
 label {
   font-size: 1.4rem;
 }
@@ -146,7 +158,7 @@ label {
   font-size: 1.2rem;
   padding: 16px 24px;
 }
-  
+
 #reading {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -168,11 +180,12 @@ label {
 .card-text p {
   margin: 0 0 8px;
 }
+
 .card-image.reversed-card-image {
   transform: rotate(180deg);
 }
 
-  .pattern-message {
+.pattern-message {
   border: 2px solid #3b244f;
   padding: 12px;
   margin: 12px 0;
@@ -194,6 +207,9 @@ label {
   margin-bottom: 8px;
   font-family: "Jersey 10", sans-serif;
   letter-spacing: 0.05em;
+  background: rgba(22, 19, 29, 0.12);
+  border: 1px solid currentColor;
+  padding: 3px 8px;
 }
 
 /* Green: possible pattern */
@@ -212,10 +228,4 @@ label {
 .pattern-red {
   background: #f4d0d6;
   color: #6b1f35;
-}
-  
-.pattern-label {
-  background: rgba(22, 19, 29, 0.12);
-  border: 1px solid currentColor;
-  padding: 3px 8px;
 }
