@@ -872,10 +872,7 @@ const cardAliases = createCardAliases();
   return;
 }
 
-document.getElementById("cardName").addEventListener("keydown", function(event) { 
-  if (event.key === "Enter") {
-    addCard();
-  }
+
 });
 
 const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
@@ -893,6 +890,11 @@ reading.innerHTML += `
 
       document.getElementById("cardName").value = "";
     }
+
+    document.getElementById("cardName").addEventListener("keydown", function(event) { 
+  if (event.key === "Enter") {
+    addCard();
+  }
   </script>
 </body>
 </html>
