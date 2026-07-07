@@ -169,3 +169,51 @@ label {
 .card-image.reversed-card-image {
   transform: rotate(180deg);
 }
+
+  .pattern-message {
+  border: 2px solid #3b244f;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 0;
+}
+
+.pattern-message h3 {
+  margin: 0 0 8px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.4rem;
+}
+
+.pattern-message p {
+  margin: 0;
+}
+
+.pattern-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-family: "Jersey 10", sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* Green: possible pattern */
+.pattern-green {
+  background: #d8f0df;
+  color: #0f5f3d;
+}
+
+/* Yellow/gold: clear pattern */
+.pattern-yellow {
+  background: #fff0bf;
+  color: #7a5700;
+}
+
+/* Red/burgundy: dominant pattern */
+.pattern-red {
+  background: #f4d0d6;
+  color: #6b1f35;
+}
+  
+.pattern-label {
+  background: rgba(22, 19, 29, 0.12);
+  border: 1px solid currentColor;
+  padding: 3px 8px;
+}
