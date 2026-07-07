@@ -884,6 +884,7 @@
 }
 
 const cardAliases = createCardAliases();
+const currentReading = [];
 
    function addCard() {
       const cardName = document.getElementById("cardName").value;
@@ -912,9 +913,78 @@ reading.innerHTML += `
   </div>
 `;
 
+currentReading.push({
+  name: matchingCardName,
+  orientation: orientation,
+  suit: card.suit,
+  element: card.element,
+  astrology: card.astrology
+});
+
+updateCardList();
+updatePatterns();
+
       document.getElementById("cardName").value = "";
     }
 
+  function updateCardList() {
+  const cardList = document.getElementById("cardList");
+
+  cardList.innerHTML = currentReading
+    .map(function(card, index) {
+      return `<li>${index + 1}. ${card.name} (${card.orientation})</li>`;
+    })
+    .join("");
+}
+
+function updatePatterns() {
+  const patterns = document.getElementById("patterns");
+
+  const totalCards = currentReading.length;
+  const reversedCount = currentReading.filter(function(card) {
+    return card.orientation === "reversed";
+  }).length;
+
+  const majorCount = currentReading.filter(function(card) {
+    return card.suit === "Major Arcana";
+  }).length;
+
+  const suitCounts = {};
+
+  currentReading.forEach(function(card) {
+    suitCounts[card.suit] = (suitCounts[card.suit] || 0) + 1;
+  });
+
+  const elementCounts = {};
+
+  currentReading.forEach(function(card) {
+    elementCounts[card.element] = (elementCounts[card.element] || 0) + 1;
+  });
+
+  let patternHTML = `
+    <p><strong>Total cards:</strong> ${totalCards}</p>
+    <p><strong>Reversals:</strong> ${reversedCount}</p>
+    <p><strong>Major Arcana:</strong> ${majorCount}</p>
+  `;
+
+  patternHTML += `<p><strong>Suits:</strong></p><ul>`;
+
+  Object.keys(suitCounts).forEach(function(suit) {
+    patternHTML += `<li>${suit}: ${suitCounts[suit]}</li>`;
+  });
+
+  patternHTML += `</ul>`;
+
+  patternHTML += `<p><strong>Elements:</strong></p><ul>`;
+
+  Object.keys(elementCounts).forEach(function(element) {
+    patternHTML += `<li>${element}: ${elementCounts[element]}</li>`;
+  });
+
+  patternHTML += `</ul>`;
+
+  patterns.innerHTML = patternHTML;
+}
       document.getElementById("cardName").addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
