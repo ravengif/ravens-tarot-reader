@@ -15,9 +15,10 @@
   <h1>Welcome, reader</h1>
 
   <p>
-    Enter your cards below, and we'll share the meanings, astrology, and more behind the cards you drew. 
+    Enter your cards below, and we'll share the meanings, astrology, and more behind the cards you drew. The goal is to TEACH you how to read cards, not to read them for you. 
   </p>
 
+<section class="entry-area">
   <label for="cardName">Card:</label>
   <input id="cardName" placeholder="Example: Eight of Wands">
 
@@ -28,6 +29,28 @@
   </select>
 
   <button onclick="addCard()">Add Card</button>
+</section>
+
+<main class="reading-layout">
+  <section class="card-details-panel">
+    <h2>Active Cards</h2>
+    <div id="reading"></div>
+  </section>
+
+  <aside class="reading-sidebar">
+    <section class="summary-box">
+      <h2>Cards in This Reading</h2>
+      <ul id="cardList"></ul>
+    </section>
+
+    <section class="summary-box">
+      <h2>Patterns</h2>
+      <div id="patterns">
+        <p>No cards entered yet.</p>
+      </div>
+    </section>
+  </aside>
+</main>
 
   <div id="reading"></div>
 
