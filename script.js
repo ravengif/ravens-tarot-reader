@@ -297,14 +297,18 @@ function updatePatterns() {
   }
 
   Object.keys(suitCounts).forEach(function(suit) {
-    const count = suitCounts[suit];
-    const patternLevel = getPatternLevel(count);
+  if (suit === "Major Arcana") {
+    return;
+  }
 
-    if (!patternLevel) {
-      return;
-    }
+  const count = suitCounts[suit];
+  const patternLevel = getPatternLevel(count);
 
-    let message = "";
+  if (!patternLevel) {
+    return;
+  }
+
+  let message = "";
 
     if (suit === "Wands") {
       message = "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.";
