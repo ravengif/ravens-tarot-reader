@@ -270,37 +270,20 @@ function updatePatterns() {
 
   const patternMessages = [];
 
-  const majorLevel = getPatternLevel(majorCount);
+const reversalLevel = getPatternLevel(reversedCount);
 
-  if (majorLevel) {
-    patternMessages.push({
-      level: majorLevel.level,
-      score: majorLevel.score,
-      count: majorCount,
-      label: majorLevel.label,
-      title: `${majorCount} Major Arcana cards`,
-      message: "Lots of Major Arcana here. Something important may be trying to come through. This could point to a major lesson, turning point, identity shift, or a situation that feels bigger than ordinary day-to-day choices."
-    });
-  }
+if (reversalLevel) {
+  patternMessages.push({
+    level: reversalLevel.level,
+    score: reversalLevel.score,
+    count: reversedCount,
+    label: reversalLevel.label,
+    title: `${reversedCount} reversed cards`,
+    message: "Lots of reversals here. The energy may be blocked, internalized, delayed, resisted, or happening beneath the surface."
+  });
+}
 
-  const reversalLevel = getPatternLevel(reversedCount);
-
-  if (reversalLevel) {
-    patternMessages.push({
-      level: reversalLevel.level,
-      score: reversalLevel.score,
-      count: reversedCount,
-      label: reversalLevel.label,
-      title: `${reversedCount} reversed cards`,
-      message: "Lots of reversals here. The energy may be blocked, internalized, delayed, resisted, or happening beneath the surface."
-    });
-  }
-
-  Object.keys(suitCounts).forEach(function(suit) {
-  if (suit === "Major Arcana") {
-    return;
-  }
-
+Object.keys(suitCounts).forEach(function(suit) {
   const count = suitCounts[suit];
   const patternLevel = getPatternLevel(count);
 
@@ -310,35 +293,35 @@ function updatePatterns() {
 
   let message = "";
 
-    if (suit === "Wands") {
-      message = "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.";
-    }
+  if (suit === "Wands") {
+    message = "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.";
+  }
 
-    if (suit === "Cups") {
-      message = "Lots of Cups points to emotion, relationships, intuition, memory, grief, longing, or attachment. The reading may be centered on what is felt rather than what is objectively clear.";
-    }
+  if (suit === "Cups") {
+    message = "Lots of Cups points to emotion, relationships, intuition, memory, grief, longing, or attachment. The reading may be centered on what is felt rather than what is objectively clear.";
+  }
 
-    if (suit === "Swords") {
-      message = "Lots of Swords points to thoughts, communication, fear, truth, decisions, anxiety, or conflict. The reading may be asking what story the mind is telling and whether it is true.";
-    }
+  if (suit === "Swords") {
+    message = "Lots of Swords points to thoughts, communication, fear, truth, decisions, anxiety, or conflict. The reading may be asking what story the mind is telling and whether it is true.";
+  }
 
-    if (suit === "Pentacles") {
-      message = "Lots of Pentacles points to practical reality: money, work, health, home, resources, consistency, or long-term stability. The reading may be asking what is actually sustainable.";
-    }
+  if (suit === "Pentacles") {
+    message = "Lots of Pentacles points to practical reality: money, work, health, home, resources, consistency, or long-term stability. The reading may be asking what is actually sustainable.";
+  }
 
-    if (suit === "Major Arcana") {
-      message = "Lots of Major Arcana suggests this reading may be pointing to something larger than a daily mood. There may be a major lesson, turning point, identity shift, or deeper spiritual pattern at play.";
-    }
+  if (suit === "Major Arcana") {
+    message = "Lots of Major Arcana suggests this reading may be pointing to something larger than a daily mood. There may be a major lesson, turning point, identity shift, or deeper spiritual pattern at play.";
+  }
 
-    patternMessages.push({
-      level: patternLevel.level,
-      score: patternLevel.score,
-      count: count,
-      label: patternLevel.label,
-      title: `${count} ${suit} cards`,
-      message: message
-    });
+  patternMessages.push({
+    level: patternLevel.level,
+    score: patternLevel.score,
+    count: count,
+    label: patternLevel.label,
+    title: `${count} ${suit} cards`,
+    message: message
   });
+});
 
   Object.keys(elementCounts).forEach(function(element) {
     const count = elementCounts[element];
