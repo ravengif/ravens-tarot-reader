@@ -201,6 +201,29 @@ button {
   padding: 3px 8px;
 }
 
+.spread-details-list {
+  margin-top: 24px;
+  border-top: 1px solid #6d5a7c;
+  padding-top: 20px;
+}
+
+.card-detail-entry {
+  border: 1px solid #6d5a7c;
+  background: #211b2b;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.card-detail-entry h3 {
+  margin-top: 0;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.5rem;
+}
+
+.card-detail-entry p {
+  margin: 0 0 8px;
+}
+
 /* Green: possible pattern */
 .pattern-green {
   background: #d8f0df;

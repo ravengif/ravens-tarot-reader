@@ -154,6 +154,7 @@ function addCard() {
   renderReading();
   updateCardList();
   updatePatterns();
+  renderCardDetailsList();
 
   document.getElementById("cardName").value = "";
 }
@@ -214,6 +215,57 @@ function showCardDetails(cardId) {
   <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
   <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
 `;
+}
+
+function renderCardDetailsList() {
+  const detailsList = document.getElementById("cardDetailsList");
+
+  if (!detailsList) {
+    return;
+  }
+
+  if (currentReading.length === 0) {
+    detailsList.innerHTML = `<p>Add cards to see their meanings here.</p>`;
+    return;
+  }
+
+  detailsList.innerHTML = currentReading
+    .map(function(readingCard, index) {
+      const cardData = tarotCards[readingCard.name];
+
+      const orientationKeywords =
+        readingCard.orientation === "upright"
+          ? cardData.upright
+          : cardData.reversed;
+
+      let clarifierNote = "";
+
+      if (readingCard.clarifiesCardId !== null) {
+        const clarifiedCard = currentReading.find(function(card) {
+          return card.id === readingCard.clarifiesCardId;
+        });
+
+        const clarifiedName = clarifiedCard ? clarifiedCard.name : "another card";
+
+        clarifierNote = `
+          <p><strong>Clarifies:</strong> ${clarifiedName}</p>
+        `;
+      }
+
+      return `
+        <article class="card-detail-entry">
+          <h3>${index + 1}. ${readingCard.name} (${readingCard.orientation})</h3>
+          ${clarifierNote}
+          <p><strong>Description:</strong> ${cardData.description}</p>
+          <p><strong>Suit:</strong> ${cardData.suit}</p>
+          <p><strong>Element:</strong> ${cardData.element}</p>
+          <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
+          <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
+          <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+        </article>
+      `;
+    })
+    .join("");
 }
 
   function updateCardList() {
