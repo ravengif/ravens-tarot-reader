@@ -1,1 +1,860 @@
 //note
+const tarotCards = {
+  "The Fool": {
+    suit: "Major Arcana",
+    element: "Air",
+    astrology: ["Uranus"],
+    image: "images/the-fool.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["beginnings", "risk", "freedom", "unknown"],
+    upright: ["fresh start", "innocence", "spontaneity", "leap of faith"],
+    reversed: ["recklessness", "naivety", "poor planning", "hesitation"]
+  },
+
+  "The Magician": {
+    suit: "Major Arcana",
+    element: "Air",
+    astrology: ["Mercury"],
+    image: "images/the-magician.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["willpower", "skill", "manifestation", "tools"],
+    upright: ["focused action", "resourcefulness", "creation", "personal power"],
+    reversed: ["manipulation", "scattered energy", "unused potential", "trickery"]
+  },
+
+  "The High Priestess": {
+    suit: "Major Arcana",
+    element: "Water",
+    astrology: ["Moon"],
+    image: "images/the-high-priestess.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["intuition", "mystery", "inner knowing", "hidden truth"],
+    upright: ["inner wisdom", "subconscious insight", "spiritual awareness", "stillness"],
+    reversed: ["blocked intuition", "secrets", "confusion", "disconnection from self"]
+  },
+
+  "The Empress": {
+    suit: "Major Arcana",
+    element: "Earth",
+    astrology: ["Venus"],
+    image: "images/the-empress.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["growth", "nurture", "creation", "abundance"],
+    upright: ["fertility", "creativity", "comfort", "receiving"],
+    reversed: ["dependence", "creative block", "neglect", "overgiving"]
+  },
+
+  "The Emperor": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Aries"],
+    image: "images/the-emperor.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["structure", "authority", "stability", "leadership"],
+    upright: ["discipline", "protection", "boundaries", "order"],
+    reversed: ["control issues", "rigidity", "domination", "lack of structure"]
+  },
+
+  "The Hierophant": {
+    suit: "Major Arcana",
+    element: "Earth",
+    astrology: ["Taurus"],
+    image: "images/the-hierophant.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["tradition", "belief", "teaching", "institutions"],
+    upright: ["guidance", "spiritual structure", "conformity", "mentorship"],
+    reversed: ["rebellion", "personal belief", "dogma", "questioning tradition"]
+  },
+
+  "The Lovers": {
+    suit: "Major Arcana",
+    element: "Air",
+    astrology: ["Gemini"],
+    image: "images/the-lovers.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["choice", "union", "values", "connection"],
+    upright: ["alignment", "partnership", "love", "meaningful decision"],
+    reversed: ["misalignment", "disharmony", "avoidance", "conflicted values"]
+  },
+
+  "The Chariot": {
+    suit: "Major Arcana",
+    element: "Water",
+    astrology: ["Cancer"],
+    image: "images/the-chariot.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["drive", "control", "direction", "victory"],
+    upright: ["determination", "momentum", "discipline", "success through focus"],
+    reversed: ["lack of direction", "forcefulness", "blocked progress", "loss of control"]
+  },
+
+  "Strength": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Leo"],
+    image: "images/strength.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["courage", "patience", "gentleness", "inner power"],
+    upright: ["compassion", "self-control", "resilience", "quiet confidence"],
+    reversed: ["self-doubt", "insecurity", "impatience", "reactivity"]
+  },
+
+  "The Hermit": {
+    suit: "Major Arcana",
+    element: "Earth",
+    astrology: ["Virgo"],
+    image: "images/the-hermit.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["solitude", "reflection", "wisdom", "searching"],
+    upright: ["inner guidance", "withdrawal", "study", "self-discovery"],
+    reversed: ["isolation", "avoidance", "loneliness", "refusing guidance"]
+  },
+
+  "Wheel of Fortune": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Jupiter"],
+    image: "images/wheel-of-fortune.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["cycles", "change", "fate", "turning point"],
+    upright: ["movement", "luck", "timing", "life shift"],
+    reversed: ["resistance", "setback", "repeating cycle", "bad timing"]
+  },
+
+  "Justice": {
+    suit: "Major Arcana",
+    element: "Air",
+    astrology: ["Libra"],
+    image: "images/justice.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["truth", "fairness", "accountability", "cause and effect"],
+    upright: ["clarity", "balance", "ethics", "consequences"],
+    reversed: ["dishonesty", "bias", "avoidance", "unfairness"]
+  },
+
+  "The Hanged Man": {
+    suit: "Major Arcana",
+    element: "Water",
+    astrology: ["Neptune"],
+    image: "images/the-hanged-man.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["pause", "surrender", "perspective", "suspension"],
+    upright: ["letting go", "new viewpoint", "waiting", "sacrifice"],
+    reversed: ["stalling", "resistance", "martyrdom", "refusing perspective"]
+  },
+
+  "Death": {
+    suit: "Major Arcana",
+    element: "Water",
+    astrology: ["Scorpio"],
+    image: "images/death.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["ending", "transformation", "release", "transition"],
+    upright: ["closure", "rebirth", "change", "letting go"],
+    reversed: ["resistance", "stagnation", "fear of change", "unfinished ending"]
+  },
+
+  "Temperance": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Sagittarius"],
+    image: "images/temperance.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["balance", "healing", "moderation", "integration"],
+    upright: ["patience", "harmony", "blending", "emotional regulation"],
+    reversed: ["imbalance", "excess", "impatience", "disharmony"]
+  },
+
+  "The Devil": {
+    suit: "Major Arcana",
+    element: "Earth",
+    astrology: ["Capricorn"],
+    image: "images/the-devil.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["attachment", "temptation", "shadow", "restriction"],
+    upright: ["bondage", "obsession", "materialism", "unhealthy pattern"],
+    reversed: ["release", "detachment", "breaking patterns", "reclaiming power"]
+  },
+
+  "The Tower": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Mars"],
+    image: "images/the-tower.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["upheaval", "revelation", "collapse", "shock"],
+    upright: ["sudden change", "truth exposed", "breakdown", "liberation through disruption"],
+    reversed: ["avoided disaster", "delayed change", "internal upheaval", "fear of collapse"]
+  },
+
+  "The Star": {
+    suit: "Major Arcana",
+    element: "Air",
+    astrology: ["Aquarius"],
+    image: "images/the-star.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["hope", "healing", "renewal", "faith"],
+    upright: ["inspiration", "peace", "spiritual support", "recovery"],
+    reversed: ["discouragement", "loss of faith", "disconnection", "healing delayed"]
+  },
+
+  "The Moon": {
+    suit: "Major Arcana",
+    element: "Water",
+    astrology: ["Pisces"],
+    image: "images/the-moon.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["illusion", "fear", "dreams", "subconscious"],
+    upright: ["uncertainty", "intuition", "confusion", "hidden emotions"],
+    reversed: ["clarity emerging", "truth revealed", "released fear", "less confusion"]
+  },
+
+  "The Sun": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Sun"],
+    image: "images/the-sun.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["joy", "clarity", "success", "vitality"],
+    upright: ["happiness", "confidence", "warmth", "visibility"],
+    reversed: ["blocked joy", "low confidence", "temporary delay", "forced positivity"]
+  },
+
+  "Judgment": {
+    suit: "Major Arcana",
+    element: "Fire",
+    astrology: ["Pluto"],
+    image: "images/judgment.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["awakening", "reckoning", "calling", "review"],
+    upright: ["accountability", "rebirth", "decision", "self-evaluation"],
+    reversed: ["self-doubt", "avoidance", "fear of judgment", "delayed decision"]
+  },
+
+  "The World": {
+    suit: "Major Arcana",
+    element: "Earth",
+    astrology: ["Saturn"],
+    image: "images/the-world.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["completion", "wholeness", "integration", "achievement"],
+    upright: ["closure", "success", "fulfillment", "cycle complete"],
+    reversed: ["unfinished business", "delay", "lack of closure", "incompletion"]
+  },
+
+  "Ace of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Fire"],
+    image: "images/ace-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["spark", "desire", "inspiration", "potential"],
+    upright: ["new passion", "creative beginning", "motivation", "opportunity"],
+    reversed: ["delay", "blocked inspiration", "lack of direction", "false start"]
+  },
+
+  "Two of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Mars in Aries"],
+    image: "images/two-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["planning", "future", "choice", "expansion"],
+    upright: ["long-term vision", "strategy", "decision point", "preparation"],
+    reversed: ["fear of change", "small thinking", "poor planning", "indecision"]
+  },
+
+  "Three of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Sun in Aries"],
+    image: "images/three-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["expansion", "foresight", "progress", "waiting"],
+    upright: ["growth", "opportunity", "long-range planning", "momentum"],
+    reversed: ["delays", "limited vision", "frustrated expansion", "lack of progress"]
+  },
+
+  "Four of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Venus in Aries"],
+    image: "images/four-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["home", "celebration", "stability", "community"],
+    upright: ["harmony", "milestone", "belonging", "shared joy"],
+    reversed: ["instability", "private celebration", "home tension", "lack of support"]
+  },
+
+  "Five of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Saturn in Leo"],
+    image: "images/five-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["conflict", "competition", "tension", "friction"],
+    upright: ["disagreement", "rivalry", "creative clash", "competing priorities"],
+    reversed: ["conflict avoidance", "resolution", "inner tension", "exhaustion from fighting"]
+  },
+
+  "Six of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Jupiter in Leo"],
+    image: "images/six-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["recognition", "victory", "confidence", "public success"],
+    upright: ["achievement", "being seen", "praise", "progress acknowledged"],
+    reversed: ["self-doubt", "private win", "fall from grace", "lack of recognition"]
+  },
+
+  "Seven of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Mars in Leo"],
+    image: "images/seven-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["defense", "challenge", "boundaries", "standing ground"],
+    upright: ["perseverance", "protecting position", "pressure", "resistance"],
+    reversed: ["overwhelm", "giving up", "lowered defenses", "burnout"]
+  },
+
+  "Eight of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Mercury in Sagittarius"],
+    image: "images/eight-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["speed", "movement", "messages", "momentum"],
+    upright: ["fast progress", "communication", "alignment", "travel"],
+    reversed: ["delays", "blocked momentum", "miscommunication", "scattered energy"]
+  },
+
+  "Nine of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Moon in Sagittarius"],
+    image: "images/nine-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["resilience", "defense", "persistence", "fatigue"],
+    upright: ["endurance", "caution", "boundaries", "last push"],
+    reversed: ["exhaustion", "paranoia", "giving up", "defensiveness"]
+  },
+
+  "Ten of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Saturn in Sagittarius"],
+    image: "images/ten-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["burden", "pressure", "responsibility", "overload"],
+    upright: ["heavy load", "duty", "stress", "carrying too much"],
+    reversed: ["release", "delegation", "burnout recovery", "dropping burdens"]
+  },
+
+  "Page of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Earth of Fire"],
+    image: "images/page-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["curiosity", "spark", "exploration", "message"],
+    upright: ["enthusiasm", "new idea", "adventure", "creative discovery"],
+    reversed: ["immaturity", "lack of direction", "impatience", "delayed message"]
+  },
+
+  "Knight of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Fire of Fire"],
+    image: "images/knight-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["action", "passion", "impulse", "adventure"],
+    upright: ["bold movement", "confidence", "energy", "pursuit"],
+    reversed: ["recklessness", "inconsistency", "haste", "scattered passion"]
+  },
+
+  "Queen of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Water of Fire"],
+    image: "images/queen-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["confidence", "magnetism", "creativity", "warmth"],
+    upright: ["charisma", "independence", "courage", "social power"],
+    reversed: ["insecurity", "jealousy", "demanding energy", "dimmed confidence"]
+  },
+
+  "King of Wands": {
+    suit: "Wands",
+    element: "Fire",
+    astrology: ["Air of Fire"],
+    image: "images/king-of-wands.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["leadership", "vision", "confidence", "boldness"],
+    upright: ["big-picture action", "entrepreneurship", "command", "inspiration"],
+    reversed: ["arrogance", "domination", "impulsiveness", "unrealistic vision"]
+  },
+
+  "Ace of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Water"],
+    image: "images/ace-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["emotion", "love", "opening", "intuition"],
+    upright: ["new feelings", "compassion", "emotional renewal", "creative flow"],
+    reversed: ["blocked emotion", "emotional depletion", "repressed feelings", "self-love needed"]
+  },
+
+  "Two of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Venus in Cancer"],
+    image: "images/two-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["connection", "partnership", "mutuality", "bond"],
+    upright: ["harmony", "attraction", "agreement", "emotional exchange"],
+    reversed: ["imbalance", "disconnection", "miscommunication", "one-sided bond"]
+  },
+
+  "Three of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Mercury in Cancer"],
+    image: "images/three-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["friendship", "celebration", "community", "support"],
+    upright: ["joy", "social connection", "reunion", "shared happiness"],
+    reversed: ["gossip", "exclusion", "social tension", "overindulgence"]
+  },
+
+  "Four of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Moon in Cancer"],
+    image: "images/four-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["apathy", "reflection", "discontent", "withdrawal"],
+    upright: ["boredom", "emotional pause", "reevaluation", "missed offer"],
+    reversed: ["renewed interest", "acceptance", "emotional reawakening", "new outlook"]
+  },
+
+  "Five of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Mars in Scorpio"],
+    image: "images/five-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["loss", "grief", "regret", "disappointment"],
+    upright: ["mourning", "sadness", "focus on what went wrong", "emotional pain"],
+    reversed: ["acceptance", "healing", "moving on", "forgiveness"]
+  },
+
+  "Six of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Sun in Scorpio"],
+    image: "images/six-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["memory", "nostalgia", "childhood", "return"],
+    upright: ["innocence", "past connection", "comfort", "sentimentality"],
+    reversed: ["stuck in past", "old wounds", "leaving nostalgia behind", "growing up"]
+  },
+
+  "Seven of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Venus in Scorpio"],
+    image: "images/seven-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["choices", "fantasy", "illusion", "possibility"],
+    upright: ["many options", "wishful thinking", "dreams", "confusion"],
+    reversed: ["clarity", "decision", "reality check", "narrowing options"]
+  },
+
+  "Eight of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Saturn in Pisces"],
+    image: "images/eight-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["leaving", "searching", "detachment", "disappointment"],
+    upright: ["walking away", "seeking meaning", "emotional departure", "letting go"],
+    reversed: ["fear of leaving", "returning", "avoidance", "staying too long"]
+  },
+
+  "Nine of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Jupiter in Pisces"],
+    image: "images/nine-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["satisfaction", "wish", "pleasure", "contentment"],
+    upright: ["fulfillment", "gratitude", "comfort", "emotional reward"],
+    reversed: ["dissatisfaction", "surface happiness", "overindulgence", "empty wish"]
+  },
+
+  "Ten of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Mars in Pisces"],
+    image: "images/ten-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["harmony", "family", "joy", "emotional completion"],
+    upright: ["contentment", "belonging", "shared happiness", "peace"],
+    reversed: ["family tension", "misaligned ideals", "emotional disharmony", "private sadness"]
+  },
+
+  "Page of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Earth of Water"],
+    image: "images/page-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["sensitivity", "message", "creativity", "openness"],
+    upright: ["emotional curiosity", "sweetness", "intuition", "gentle offer"],
+    reversed: ["immaturity", "emotional avoidance", "blocked creativity", "insecurity"]
+  },
+
+  "Knight of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Fire of Water"],
+    image: "images/knight-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["romance", "idealism", "invitation", "pursuit"],
+    upright: ["charm", "emotional expression", "proposal", "following the heart"],
+    reversed: ["moodiness", "unrealistic fantasy", "emotional inconsistency", "empty charm"]
+  },
+
+  "Queen of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Water of Water"],
+    image: "images/queen-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["compassion", "intuition", "emotional depth", "care"],
+    upright: ["empathy", "nurturing", "inner wisdom", "emotional maturity"],
+    reversed: ["emotional overwhelm", "poor boundaries", "codependency", "self-neglect"]
+  },
+
+  "King of Cups": {
+    suit: "Cups",
+    element: "Water",
+    astrology: ["Air of Water"],
+    image: "images/king-of-cups.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["emotional control", "wisdom", "compassion", "maturity"],
+    upright: ["calm leadership", "balanced emotion", "patience", "support"],
+    reversed: ["emotional repression", "manipulation", "moodiness", "avoidance"]
+  },
+
+  "Ace of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Air"],
+    image: "images/ace-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["truth", "clarity", "breakthrough", "idea"],
+    upright: ["mental clarity", "new insight", "honesty", "decision"],
+    reversed: ["confusion", "miscommunication", "distorted truth", "mental block"]
+  },
+
+  "Two of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Moon in Libra"],
+    image: "images/two-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["choice", "stalemate", "avoidance", "indecision"],
+    upright: ["blocked decision", "weighing options", "emotional detachment", "pause"],
+    reversed: ["confusion lifting", "forced choice", "overwhelm", "delayed decision"]
+  },
+
+  "Three of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Saturn in Libra"],
+    image: "images/three-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["heartbreak", "pain", "grief", "truth"],
+    upright: ["emotional wound", "sorrow", "separation", "painful clarity"],
+    reversed: ["healing", "release", "forgiveness", "recovering from pain"]
+  },
+
+  "Four of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Jupiter in Libra"],
+    image: "images/four-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["rest", "recovery", "pause", "contemplation"],
+    upright: ["mental rest", "stillness", "retreat", "recuperation"],
+    reversed: ["restlessness", "burnout", "returning to action", "forced pause"]
+  },
+
+  "Five of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Venus in Aquarius"],
+    image: "images/five-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["conflict", "defeat", "ego", "tension"],
+    upright: ["win at a cost", "argument", "self-interest", "hostility"],
+    reversed: ["reconciliation", "walking away", "regret", "ending conflict"]
+  },
+
+  "Six of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Mercury in Aquarius"],
+    image: "images/six-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["transition", "movement", "recovery", "leaving"],
+    upright: ["moving on", "mental shift", "healing journey", "distance"],
+    reversed: ["stuckness", "resisting transition", "unfinished movement", "returning difficulty"]
+  },
+
+  "Seven of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Moon in Aquarius"],
+    image: "images/seven-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["strategy", "secrecy", "avoidance", "deception"],
+    upright: ["acting alone", "withholding", "cunning", "escape"],
+    reversed: ["truth exposed", "confession", "self-deception", "changing tactics"]
+  },
+
+  "Eight of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Jupiter in Gemini"],
+    image: "images/eight-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["restriction", "fear", "trapped", "limitation"],
+    upright: ["mental prison", "self-limiting belief", "anxiety", "feeling stuck"],
+    reversed: ["release", "new perspective", "freedom", "escaping fear"]
+  },
+
+  "Nine of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Mars in Gemini"],
+    image: "images/nine-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["anxiety", "worry", "nightmares", "guilt"],
+    upright: ["mental anguish", "fear spiral", "stress", "sleeplessness"],
+    reversed: ["recovery", "seeking help", "released fear", "inner healing"]
+  },
+
+  "Ten of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Sun in Gemini"],
+    image: "images/ten-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["ending", "betrayal", "collapse", "finality"],
+    upright: ["painful ending", "rock bottom", "defeat", "closure through exhaustion"],
+    reversed: ["recovery", "survival", "regeneration", "resisting an ending"]
+  },
+
+  "Page of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Earth of Air"],
+    image: "images/page-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["curiosity", "truth-seeking", "message", "observation"],
+    upright: ["learning", "watchfulness", "new ideas", "direct communication"],
+    reversed: ["gossip", "spying", "harsh words", "mental immaturity"]
+  },
+
+  "Knight of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Fire of Air"],
+    image: "images/knight-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["speed", "ambition", "directness", "pursuit"],
+    upright: ["decisive action", "assertiveness", "focus", "charging forward"],
+    reversed: ["recklessness", "aggression", "impatience", "poor timing"]
+  },
+
+  "Queen of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Water of Air"],
+    image: "images/queen-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["truth", "discernment", "boundaries", "clarity"],
+    upright: ["honesty", "independence", "clear judgment", "direct speech"],
+    reversed: ["coldness", "bitterness", "harsh judgment", "poor boundaries"]
+  },
+
+  "King of Swords": {
+    suit: "Swords",
+    element: "Air",
+    astrology: ["Air of Air"],
+    image: "images/king-of-swords.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["authority", "logic", "truth", "discipline"],
+    upright: ["mental mastery", "fair judgment", "strategy", "principled leadership"],
+    reversed: ["manipulation", "cruelty", "rigidity", "misuse of intellect"]
+  },
+
+  "Ace of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Earth"],
+    image: "images/ace-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["opportunity", "material start", "seed", "prosperity"],
+    upright: ["new resource", "career opportunity", "financial beginning", "manifestation"],
+    reversed: ["missed opportunity", "delay", "unstable start", "poor planning"]
+  },
+
+  "Two of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Jupiter in Capricorn"],
+    image: "images/two-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["balance", "priorities", "adaptability", "juggling"],
+    upright: ["time management", "flexibility", "multiple demands", "adjustment"],
+    reversed: ["overwhelm", "disorganization", "dropped priorities", "imbalance"]
+  },
+
+  "Three of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Mars in Capricorn"],
+    image: "images/three-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["teamwork", "skill", "collaboration", "building"],
+    upright: ["learning", "craftsmanship", "shared effort", "recognition of skill"],
+    reversed: ["misalignment", "poor teamwork", "lack of effort", "working alone"]
+  },
+
+  "Four of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Sun in Capricorn"],
+    image: "images/four-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["security", "control", "holding on", "stability"],
+    upright: ["saving", "protection", "scarcity mindset", "guarded resources"],
+    reversed: ["release", "overspending", "letting go", "fear of loss"]
+  },
+
+  "Five of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Mercury in Taurus"],
+    image: "images/five-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["loss", "hardship", "exclusion", "scarcity"],
+    upright: ["financial stress", "isolation", "need", "feeling unsupported"],
+    reversed: ["recovery", "support found", "improvement", "leaving hardship"]
+  },
+
+  "Six of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Moon in Taurus"],
+    image: "images/six-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["giving", "receiving", "generosity", "exchange"],
+    upright: ["support", "charity", "fairness", "sharing resources"],
+    reversed: ["power imbalance", "strings attached", "debt", "one-sided giving"]
+  },
+
+  "Seven of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Saturn in Taurus"],
+    image: "images/seven-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["patience", "investment", "assessment", "growth"],
+    upright: ["long-term effort", "waiting", "evaluation", "sustainable progress"],
+    reversed: ["impatience", "limited reward", "wasted effort", "poor investment"]
+  },
+
+  "Eight of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Sun in Virgo"],
+    image: "images/eight-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["work", "craft", "practice", "mastery"],
+    upright: ["skill-building", "discipline", "attention to detail", "dedication"],
+    reversed: ["perfectionism", "low effort", "burnout", "lack of focus"]
+  },
+
+  "Nine of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Venus in Virgo"],
+    image: "images/nine-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["independence", "luxury", "self-sufficiency", "reward"],
+    upright: ["financial comfort", "confidence", "earned success", "personal stability"],
+    reversed: ["dependence", "overwork", "insecurity", "false independence"]
+  },
+
+  "Ten of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Mercury in Virgo"],
+    image: "images/ten-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["legacy", "family", "wealth", "long-term security"],
+    upright: ["stability", "inheritance", "tradition", "lasting success"],
+    reversed: ["instability", "family conflict", "financial strain", "broken legacy"]
+  },
+
+  "Page of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Earth of Earth"],
+    image: "images/page-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["study", "opportunity", "practice", "beginner"],
+    upright: ["learning", "new goal", "practical message", "skill development"],
+    reversed: ["procrastination", "lack of follow-through", "missed lesson", "immaturity"]
+  },
+
+  "Knight of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Fire of Earth"],
+    image: "images/knight-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["routine", "diligence", "patience", "reliability"],
+    upright: ["steady progress", "responsibility", "hard work", "consistency"],
+    reversed: ["stagnation", "stubbornness", "laziness", "monotony"]
+  },
+
+  "Queen of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Water of Earth"],
+    image: "images/queen-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["nurture", "stability", "resources", "practical care"],
+    upright: ["comfort", "generosity", "grounded support", "home and work balance"],
+    reversed: ["self-neglect", "smothering", "financial insecurity", "overgiving"]
+  },
+
+  "King of Pentacles": {
+    suit: "Pentacles",
+    element: "Earth",
+    astrology: ["Air of Earth"],
+    image: "images/king-of-pentacles.jpg",
+    description: "DESCRIPTION COMING SOON",
+    keywords: ["security", "success", "leadership", "wealth"],
+    upright: ["stability", "discipline", "provider energy", "material mastery"],
+    reversed: ["greed", "control", "instability", "status obsession"]
+  }
+}
