@@ -126,7 +126,43 @@
 const cardAliases = createCardAliases();
 const currentReading = [];
 
+let activeTheme = "general";
 let activeClarifierTargetId = null;
+
+function getActiveTheme() {
+  const themeSelect = document.getElementById("readingTheme");
+
+  if (!themeSelect) {
+    return "general";
+  }
+
+  return themeSelect.value;
+}
+
+function getKeywordSet(cardData, orientation) {
+  const theme = getActiveTheme();
+
+  if (
+    theme !== "general" &&
+    cardData.themeKeywords &&
+    cardData.themeKeywords[theme]
+  ) {
+    return {
+      label: `${theme.charAt(0).toUpperCase() + theme.slice(1)} keywords`,
+      keywords: cardData.themeKeywords[theme]
+    };
+  }
+
+  return {
+    label: `${orientation} keywords`,
+    keywords: orientation === "upright" ? cardData.upright : cardData.reversed
+  };
+}
+
+function updateTheme() {
+  activeTheme = getActiveTheme();
+  renderCardDetailsList();
+}
 
 function addCard() {
   const cardName = document.getElementById("cardName").value;
@@ -238,19 +274,15 @@ function showCardDetails(cardId) {
     return;
   }
 
-  const orientationKeywords =
-    readingCard.orientation === "upright"
-      ? cardData.upright
-      : cardData.reversed;
+  const keywordSet = getKeywordSet(cardData, readingCard.orientation);
 
   details.innerHTML = `
   <h3>${readingCard.name} (${readingCard.orientation})</h3>
-  <p><strong>Description:</strong> ${cardData.description}</p>
   <p><strong>Suit:</strong> ${cardData.suit}</p>
   <p><strong>Element:</strong> ${cardData.element}</p>
   <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
   <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-  <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+  <p><strong>${keywordSet.label}:</strong> ${keywordSet.keywords.join(", ")}</p>
 `;
 }
 
@@ -293,10 +325,7 @@ function renderCardDetailsList() {
     .map(function(readingCard, index) {
       const cardData = tarotCards[readingCard.name];
 
-      const orientationKeywords =
-        readingCard.orientation === "upright"
-          ? cardData.upright
-          : cardData.reversed;
+      const keywordSet = getKeywordSet(cardData, readingCard.orientation);
 
       let clarifierNote = "";
 
@@ -316,12 +345,11 @@ function renderCardDetailsList() {
         <article class="card-detail-entry">
           <h3>${index + 1}. ${readingCard.name} (${readingCard.orientation})</h3>
           ${clarifierNote}
-          <p><strong>Description:</strong> ${cardData.description}</p>
           <p><strong>Suit:</strong> ${cardData.suit}</p>
           <p><strong>Element:</strong> ${cardData.element}</p>
           <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
           <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-          <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+          <p><strong>${keywordSet.label}:</strong> ${keywordSet.keywords.join(", ")}</p>
         </article>
       `;
     })
@@ -583,3 +611,5 @@ document.getElementById("cardName").addEventListener("keydown", function(event) 
     addCard();
   }
 });
+
+document.getElementById("readingTheme").addEventListener("change", updateTheme);
