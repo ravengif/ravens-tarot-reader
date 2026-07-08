@@ -206,14 +206,14 @@ function showCardDetails(cardId) {
       : cardData.reversed;
 
   details.innerHTML = `
-    <h3>${readingCard.name} (${readingCard.orientation})</h3>
-    <p><strong>Description:</strong> ${cardData.description}</p>
-    <p><strong>Suit:</strong> ${cardData.suit}</p>
-    <p><strong>Element:</strong> ${cardData.element}</p>
-    <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
-    <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-    <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
-  `
+  <h3>${readingCard.name} (${readingCard.orientation})</h3>
+  <p><strong>Description:</strong> ${cardData.description}</p>
+  <p><strong>Suit:</strong> ${cardData.suit}</p>
+  <p><strong>Element:</strong> ${cardData.element}</p>
+  <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
+  <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
+  <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+`;
 }
 
   function updateCardList() {
@@ -277,7 +277,7 @@ function getCardNumber(cardName) {
   return null;
 }
 
-function updatePatterns() 
+function updatePatterns() {
   const patterns = document.getElementById("patterns");
   const totalCards = currentReading.length;
 
@@ -463,10 +463,11 @@ function updatePatterns()
   });
 
   patterns.innerHTML = patternHTML;
+}
 
-      document.getElementById("cardName").addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        addCard();
-      }
-    });
+document.getElementById("cardName").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addCard();
+  }
+});
