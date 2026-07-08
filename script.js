@@ -126,7 +126,7 @@
 const cardAliases = createCardAliases();
 const currentReading = [];
 
-   function addCard() {
+function addCard() {
   const cardName = document.getElementById("cardName").value;
   const orientation = document.getElementById("orientation").value;
 
@@ -151,7 +151,14 @@ const currentReading = [];
     clarifiesCardId: null
   });
 
-  function renderReading() {
+  renderReading();
+  updateCardList();
+
+
+  document.getElementById("cardName").value = "";
+}
+
+function renderReading() {
   const reading = document.getElementById("reading");
 
   reading.innerHTML = currentReading
@@ -206,14 +213,7 @@ function showCardDetails(cardId) {
     <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
     <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
     <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
-  `;
-}
-
-  renderReading();
-  updateCardList();
-  updatePatterns();
-
-  document.getElementById("cardName").value = "";
+  `
 }
 
   function updateCardList() {
