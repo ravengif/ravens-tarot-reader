@@ -277,7 +277,7 @@ function getCardNumber(cardName) {
   return null;
 }
 
-function updatePatterns() {
+function updatePatterns() 
   const patterns = document.getElementById("patterns");
   const totalCards = currentReading.length;
 
