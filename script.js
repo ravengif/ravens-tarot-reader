@@ -127,53 +127,94 @@ const cardAliases = createCardAliases();
 const currentReading = [];
 
    function addCard() {
-      const cardName = document.getElementById("cardName").value;
-      const orientation = document.getElementById("orientation").value;
-      const reading = document.getElementById("reading");
+  const cardName = document.getElementById("cardName").value;
+  const orientation = document.getElementById("orientation").value;
 
-     const normalizedInput = normalizeText(cardName);
-     const matchingCardName = cardAliases[normalizedInput];
-     const card = tarotCards[matchingCardName];
+  const normalizedInput = normalizeText(cardName);
+  const matchingCardName = cardAliases[normalizedInput];
+  const card = tarotCards[matchingCardName];
 
-      if (!card) {
-  alert("Oh shit, I don't know that one. Try again?");
-  return;
+  if (!normalizedInput) {
+    alert("Type a card name first.");
+    return;
+  }
+
+  if (!card) {
+    alert("Oh shit, I don't know that one. Try again?");
+    return;
+  }
+
+  currentReading.push({
+    id: Date.now(),
+    name: matchingCardName,
+    orientation: orientation,
+    clarifiesCardId: null
+  });
+
+  function renderReading() {
+  const reading = document.getElementById("reading");
+
+  reading.innerHTML = currentReading
+    .map(function(readingCard) {
+      const cardData = tarotCards[readingCard.name];
+
+      const imageClass =
+        readingCard.orientation === "reversed"
+          ? "reversed-card-image"
+          : "";
+
+      return `
+        <div class="card-stack">
+          <div class="spread-card" onclick="showCardDetails(${readingCard.id})">
+            <img class="${imageClass}" src="${cardData.image}" alt="${readingCard.name}">
+
+            <h3 class="spread-card-title">${readingCard.name}</h3>
+            <p class="spread-card-orientation">${readingCard.orientation}</p>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
-const orientationKeywords = orientation === "upright" ? card.upright : card.reversed;
-const imageClass = orientation === "reversed" ? "card-image reversed-card-image" : "card-image";
+function showCardDetails(cardId) {
+  const readingCard = currentReading.find(function(card) {
+    return card.id === cardId;
+  });
 
-reading.innerHTML += `
-  <div class="card-entry">
-    <div class="card-image-wrap">
-      <img class="${imageClass}" src="${card.image}" alt="${matchingCardName}">
-    </div>
+  if (!readingCard) {
+    return;
+  }
 
-    <div class="card-text">
-      <h2>${matchingCardName} (${orientation})</h2>
-      <p><strong>Description:</strong> ${card.description}</p>
-      <p><strong>Suit:</strong> ${card.suit}</p>
-      <p><strong>Element:</strong> ${card.element}</p>
-      <p><strong>Astrology:</strong> ${card.astrology.join(", ")}</p>
-      <p><strong>General keywords:</strong> ${card.keywords.join(", ")}</p>
-      <p><strong>${orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
-    </div>
-  </div>
-`;
+  const cardData = tarotCards[readingCard.name];
+  const details = document.getElementById("selectedCardDetails");
 
-currentReading.push({
-  name: matchingCardName,
-  orientation: orientation,
-  suit: card.suit,
-  element: card.element,
-  astrology: card.astrology
-});
+  if (!details) {
+    return;
+  }
 
-updateCardList();
-updatePatterns();
+  const orientationKeywords =
+    readingCard.orientation === "upright"
+      ? cardData.upright
+      : cardData.reversed;
 
-      document.getElementById("cardName").value = "";
-    }
+  details.innerHTML = `
+    <h3>${readingCard.name} (${readingCard.orientation})</h3>
+    <p><strong>Description:</strong> ${cardData.description}</p>
+    <p><strong>Suit:</strong> ${cardData.suit}</p>
+    <p><strong>Element:</strong> ${cardData.element}</p>
+    <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
+    <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
+    <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
+  `;
+}
+
+  renderReading();
+  updateCardList();
+  updatePatterns();
+
+  document.getElementById("cardName").value = "";
+}
 
   function updateCardList() {
   const cardList = document.getElementById("cardList");
@@ -245,28 +286,184 @@ function updatePatterns() {
     return;
   }
 
-  const reversedCount = currentReading.filter(function(card) {
-    return card.orientation === "reversed";
+  const reversedCount = currentReading.filter(function(readingCard) {
+    return readingCard.orientation === "reversed";
   }).length;
 
-  const majorCount = currentReading.filter(function(card) {
-    return card.suit === "Major Arcana";
+  const majorCount = currentReading.filter(function(readingCard) {
+    const cardData = tarotCards[readingCard.name];
+    return cardData.suit === "Major Arcana";
   }).length;
 
   const suitCounts = {};
   const elementCounts = {};
   const numberCounts = {};
 
-  currentReading.forEach(function(card) {
-    suitCounts[card.suit] = (suitCounts[card.suit] || 0) + 1;
-    elementCounts[card.element] = (elementCounts[card.element] || 0) + 1;
+  currentReading.forEach(function(readingCard) {
+    const cardData = tarotCards[readingCard.name];
 
-    const cardNumber = getCardNumber(card.name);
+    suitCounts[cardData.suit] = (suitCounts[cardData.suit] || 0) + 1;
+    elementCounts[cardData.element] = (elementCounts[cardData.element] || 0) + 1;
+
+    const cardNumber = getCardNumber(readingCard.name);
 
     if (cardNumber) {
       numberCounts[cardNumber] = (numberCounts[cardNumber] || 0) + 1;
     }
   });
+
+  const patternMessages = [];
+
+  const reversalLevel = getPatternLevel(reversedCount);
+
+  if (reversalLevel) {
+    patternMessages.push({
+      level: reversalLevel.level,
+      score: reversalLevel.score,
+      count: reversedCount,
+      label: reversalLevel.label,
+      title: `${reversedCount} reversed cards`,
+      message: "Lots of reversals here. The energy may be blocked, internalized, delayed, resisted, or happening beneath the surface."
+    });
+  }
+
+  Object.keys(suitCounts).forEach(function(suit) {
+    const count = suitCounts[suit];
+    const patternLevel = getPatternLevel(count);
+
+    if (!patternLevel) {
+      return;
+    }
+
+    let message = "";
+
+    if (suit === "Wands") {
+      message = "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.";
+    }
+
+    if (suit === "Cups") {
+      message = "Lots of Cups points to emotion, relationships, intuition, memory, grief, longing, or attachment. The reading may be centered on what is felt rather than what is objectively clear.";
+    }
+
+    if (suit === "Swords") {
+      message = "Lots of Swords points to thoughts, communication, fear, truth, decisions, anxiety, or conflict. The reading may be asking what story the mind is telling and whether it is true.";
+    }
+
+    if (suit === "Pentacles") {
+      message = "Lots of Pentacles points to practical reality: money, work, health, home, resources, consistency, or long-term stability. The reading may be asking what is actually sustainable.";
+    }
+
+    if (suit === "Major Arcana") {
+      message = "Lots of Major Arcana suggests this reading may be pointing to something larger than a daily mood. There may be a major lesson, turning point, identity shift, or deeper spiritual pattern at play.";
+    }
+
+    patternMessages.push({
+      level: patternLevel.level,
+      score: patternLevel.score,
+      count: count,
+      label: patternLevel.label,
+      title: `${count} ${suit} cards`,
+      message: message
+    });
+  });
+
+  Object.keys(elementCounts).forEach(function(element) {
+    const count = elementCounts[element];
+    const patternLevel = getPatternLevel(count);
+
+    if (!patternLevel) {
+      return;
+    }
+
+    let message = "";
+
+    if (element === "Fire") {
+      message = "Lots of Fire energy can point to passion, urgency, confidence, ambition, action, anger, or conflict. It can be motivating, but too much Fire can become impulsive, reactive, or burned out. Astrologically, Fire can echo 1st house identity, 5th house creativity or romance, and 9th house belief, travel, risk, or expansion themes.";
+    }
+
+    if (element === "Water") {
+      message = "Lots of Water energy can point to feelings, memory, relationships, dreams, grief, attachment, or intuition. It can be emotionally honest, but too much Water can blur boundaries or make it hard to separate intuition from fear. Astrologically, Water can echo 4th house home and family, 8th house intimacy or shadow work, and 12th house subconscious or spiritual themes.";
+    }
+
+    if (element === "Air") {
+      message = "Lots of Air energy can point to thoughts, communication, decisions, mental pressure, analysis, or truth. It can bring insight, but too much Air can become overthinking or detachment. Astrologically, Air can echo 3rd house communication, 7th house relationships or contracts, and 11th house friendships, networks, or community themes.";
+    }
+
+    if (element === "Earth") {
+      message = "Lots of Earth energy can point to money, work, the body, home, resources, routine, and long-term security. It can be grounding, but too much Earth can become stagnation or fear of change. Astrologically, Earth can echo 2nd house money and values, 6th house work or health routines, and 10th house career, status, or responsibility themes.";
+    }
+
+    patternMessages.push({
+      level: patternLevel.level,
+      score: patternLevel.score,
+      count: count,
+      label: patternLevel.label,
+      title: `${count} ${element} cards`,
+      message: message
+    });
+  });
+
+  Object.keys(numberCounts).forEach(function(number) {
+    const count = numberCounts[number];
+    const patternLevel = getPatternLevel(count);
+
+    if (!patternLevel) {
+      return;
+    }
+
+    const numberMeanings = {
+      "Ace": "Ooh! Aces point to beginnings, raw potential, and something new trying to emerge. Something isn't here yet, BUT it's on the horizon",
+      "Two": "Twos point to choice, duality, balance, partnership, inner conflict, or the need to weigh two sides of something. A fork in a road, or a shaking of hands.",
+      "Three": "Threes suggest growth, expression, collaboration, or initial results. Whatever it is, it isn't just about you.",
+      "Four": "Fours point to structure, stability, foundation, and containment. This can be grounding, but it can also show where something has become too stagnant.",
+      "Five": "Fives often show conflict, instability, disruption, challenge, or growing pains. Something may be unstable, but the disruption can reveal what needs to change.",
+      "Six": "Sixes often talk about to healing, support, exchange, repair, memory, recognition, movement toward harmony... or the lack of these concepts.",
+      "Seven": "Sevens suggest complexity, assessment, defense, mystery, strategy, uncertainty, or the need to pause and evaluate to get PAST the unknown.",
+      "Eight": "Eights point to movement, effort, restriction, momentum, pressure, or a process already in motion. Let's GOOOOOOOO (or not, if reversed).",
+      "Nine": "Nines often show culmination, intensity, solitude, near-completion, or a situation reaching emotional, mental, or material weight. We are almost there...",
+      "Ten": "Tens show a cycle reaching its limit. This can be fulfillment, overload, collapse, legacy, or the point where something must transform. The end of a cycle."
+    };
+
+    patternMessages.push({
+      level: patternLevel.level,
+      score: patternLevel.score,
+      count: count,
+      label: patternLevel.label,
+      title: `${count} ${number}s`,
+      message: numberMeanings[number]
+    });
+  });
+
+  patternMessages.sort(function(a, b) {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
+    return b.count - a.count;
+  });
+
+  let patternHTML = `
+    <p><strong>Total cards:</strong> ${totalCards}</p>
+    <p><strong>Reversals:</strong> ${reversedCount}</p>
+    <p><strong>Major Arcana:</strong> ${majorCount}</p>
+  `;
+
+  if (patternMessages.length === 0) {
+    patternHTML += `<p>No major patterns detected yet. Add more cards to build the reading.</p>`;
+  }
+
+  patternMessages.forEach(function(pattern) {
+    patternHTML += `
+      <div class="pattern-message pattern-${pattern.level}">
+        <span class="pattern-label">${pattern.label}</span>
+        <h3>${pattern.title}</h3>
+        <p>${pattern.message}</p>
+      </div>
+    `;
+  });
+
+  patterns.innerHTML = patternHTML;
+}
 
   const patternMessages = [];
 
@@ -419,7 +616,7 @@ Object.keys(suitCounts).forEach(function(suit) {
   });
 
   patterns.innerHTML = patternHTML;
-}
+
       document.getElementById("cardName").addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
