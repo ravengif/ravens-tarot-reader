@@ -126,6 +126,8 @@
 const cardAliases = createCardAliases();
 const currentReading = [];
 
+let activeClarifierTargetId = null;
+
 function addCard() {
   const cardName = document.getElementById("cardName").value;
   const orientation = document.getElementById("orientation").value;
@@ -145,11 +147,11 @@ function addCard() {
   }
 
   currentReading.push({
-    id: Date.now(),
-    name: matchingCardName,
-    orientation: orientation,
-    clarifiesCardId: null
-  });
+  id: Date.now(),
+  name: matchingCardName,
+  orientation: orientation,
+  clarifiesCardId: activeClarifierTargetId
+});
 
   renderReading();
   updateCardList();
@@ -162,27 +164,62 @@ function addCard() {
 function renderReading() {
   const reading = document.getElementById("reading");
 
-  reading.innerHTML = currentReading
-    .map(function(readingCard) {
-      const cardData = tarotCards[readingCard.name];
+  const mainCards = currentReading.filter(function(card) {
+    return card.clarifiesCardId === null;
+  });
 
-      const imageClass =
-        readingCard.orientation === "reversed"
-          ? "reversed-card-image"
-          : "";
+  reading.innerHTML = mainCards
+    .map(function(mainCard) {
+      const cardData = tarotCards[mainCard.name];
+
+      const clarifiers = currentReading.filter(function(card) {
+        return card.clarifiesCardId === mainCard.id;
+      });
+
+      const mainCardHTML = createSpreadCardHTML(mainCard, cardData, false);
+
+      const clarifierHTML = clarifiers
+        .map(function(clarifierCard) {
+          const clarifierData = tarotCards[clarifierCard.name];
+          return createSpreadCardHTML(clarifierCard, clarifierData, true);
+        })
+        .join("");
 
       return `
         <div class="card-stack">
-          <div class="spread-card" onclick="showCardDetails(${readingCard.id})">
-            <img class="${imageClass}" src="${cardData.image}" alt="${readingCard.name}">
-
-            <h3 class="spread-card-title">${readingCard.name}</h3>
-            <p class="spread-card-orientation">${readingCard.orientation}</p>
-          </div>
+          ${mainCardHTML}
+          ${clarifierHTML}
         </div>
       `;
     })
     .join("");
+}
+
+function createSpreadCardHTML(readingCard, cardData, isClarifier) {
+  const imageClass =
+    readingCard.orientation === "reversed"
+      ? "reversed-card-image"
+      : "";
+
+  const clarifierClass = isClarifier ? "clarifier-card" : "";
+
+  const activeTargetClass =
+    activeClarifierTargetId === readingCard.id
+      ? "active-clarifier-target"
+      : "";
+
+  const clickAction = isClarifier
+    ? `showCardDetails(${readingCard.id})`
+    : `toggleClarifierTarget(${readingCard.id}); showCardDetails(${readingCard.id})`;
+
+  return `
+    <div class="spread-card ${clarifierClass} ${activeTargetClass}" onclick="${clickAction}">
+      <img class="${imageClass}" src="${cardData.image}" alt="${readingCard.name}">
+
+      <h3 class="spread-card-title">${readingCard.name}</h3>
+      <p class="spread-card-orientation">${readingCard.orientation}</p>
+    </div>
+  `;
 }
 
 function showCardDetails(cardId) {
@@ -215,6 +252,29 @@ function showCardDetails(cardId) {
   <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
   <p><strong>${readingCard.orientation} keywords:</strong> ${orientationKeywords.join(", ")}</p>
 `;
+}
+
+function toggleClarifierTarget(cardId) {
+  const clickedCard = currentReading.find(function(card) {
+    return card.id === cardId;
+  });
+
+  if (!clickedCard) {
+    return;
+  }
+
+  if (clickedCard.clarifiesCardId !== null) {
+    alert("Clarifiers cannot receive clarifiers yet.");
+    return;
+  }
+
+  if (activeClarifierTargetId === cardId) {
+    activeClarifierTargetId = null;
+  } else {
+    activeClarifierTargetId = cardId;
+  }
+
+  renderReading();
 }
 
 function renderCardDetailsList() {

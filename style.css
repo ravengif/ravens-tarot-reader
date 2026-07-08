@@ -224,6 +224,41 @@ button {
   margin: 0 0 8px;
 }
 
+.active-clarifier-target {
+  border: 3px solid #d8b4fe;
+  box-shadow: 0 0 0 4px rgba(216, 180, 254, 0.18);
+}
+
+.clarifier-card {
+  margin-left: 16px;
+  transform: scale(0.82);
+  transform-origin: top left;
+  border-color: #b893c9;
+  opacity: 0.95;
+}
+
+.clarifier-card img {
+  max-height: 180px;
+  object-fit: contain;
+}
+
+.clarifier-card .spread-card-title {
+  font-size: 1rem;
+}
+
+.clarifier-card .spread-card-orientation {
+  font-size: 0.8rem;
+}
+
+.clarifier-card::before {
+  content: "Clarifier";
+  display: block;
+  margin-bottom: 6px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1rem;
+  color: #d8b4fe;
+}
+
 /* Green: possible pattern */
 .pattern-green {
   background: #d8f0df;
