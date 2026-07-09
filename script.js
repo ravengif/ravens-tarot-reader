@@ -164,6 +164,22 @@ function updateTheme() {
   renderCardDetailsList();
 }
 
+function getClarifiersForCard(cardId) {
+  return currentReading.filter(function(card) {
+    return card.clarifiesCardId === cardId;
+  });
+}
+
+function getClarifierMeaning(cardData, orientation) {
+  if (!cardData.clarifier) {
+    return "";
+  }
+
+  return orientation === "upright"
+    ? cardData.clarifier.upright
+    : cardData.clarifier.reversed;
+}
+
 function addCard() {
   const cardName = document.getElementById("cardName").value;
   const orientation = document.getElementById("orientation").value;
@@ -328,6 +344,8 @@ function renderCardDetailsList() {
       const keywordSet = getKeywordSet(cardData, readingCard.orientation);
 
       let clarifierNote = "";
+      let clarifiedByNote = "";
+      let detailClass = "";
 
       if (readingCard.clarifiesCardId !== null) {
         const clarifiedCard = currentReading.find(function(card) {
@@ -335,15 +353,34 @@ function renderCardDetailsList() {
         });
 
         const clarifiedName = clarifiedCard ? clarifiedCard.name : "another card";
+        const clarifierMeaning = getClarifierMeaning(cardData, readingCard.orientation);
+
+        detailClass = "card-detail-clarifier";
 
         clarifierNote = `
           <p><strong>Clarifies:</strong> ${clarifiedName}</p>
+          <p><strong>As a clarifier:</strong> ${clarifierMeaning}</p>
         `;
+      } else {
+        const clarifyingCards = getClarifiersForCard(readingCard.id);
+
+        if (clarifyingCards.length > 0) {
+          const clarifierNames = clarifyingCards
+            .map(function(card) {
+              return `${card.name} (${card.orientation})`;
+            })
+            .join(", ");
+
+          clarifiedByNote = `
+            <p class="clarified-by-note"><strong>Clarified by:</strong> ${clarifierNames}</p>
+          `;
+        }
       }
 
       return `
-        <article class="card-detail-entry">
+        <article class="card-detail-entry ${detailClass}">
           <h3>${index + 1}. ${readingCard.name} (${readingCard.orientation})</h3>
+          ${clarifiedByNote}
           ${clarifierNote}
           <p><strong>Suit:</strong> ${cardData.suit}</p>
           <p><strong>Element:</strong> ${cardData.element}</p>

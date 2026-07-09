@@ -214,6 +214,24 @@ button {
   margin-bottom: 16px;
 }
 
+.card-detail-clarifier {
+  border-color: #b893c9;
+  background: #2a2036;
+  margin-left: 20px;
+}
+
+.card-detail-clarifier h3::before {
+  content: "Clarifier: ";
+  color: #d8b4fe;
+}
+
+.clarified-by-note {
+  border: 1px solid #b893c9;
+  background: rgba(216, 180, 254, 0.12);
+  color: #f4edf8;
+  padding: 8px 10px;
+}
+
 .card-detail-entry h3 {
   margin-top: 0;
   font-family: "Jersey 10", sans-serif;
