@@ -139,17 +139,18 @@ function getActiveTheme() {
   return themeSelect.value;
 }
 
-function getKeywordSet(cardData, orientation) {
+function getMeaningSet(cardData, orientation) {
   const theme = getActiveTheme();
 
   if (
     theme !== "general" &&
-    cardData.themeKeywords &&
-    cardData.themeKeywords[theme]
+    cardData.themeMeanings &&
+    cardData.themeMeanings[theme] &&
+    cardData.themeMeanings[theme][orientation]
   ) {
     return {
-      label: `${theme.charAt(0).toUpperCase() + theme.slice(1)} keywords`,
-      keywords: cardData.themeKeywords[theme]
+      label: `${theme.charAt(0).toUpperCase() + theme.slice(1)} ${orientation} meaning`,
+      meaning: cardData.themeMeanings[theme][orientation]
     };
   }
 
@@ -290,7 +291,10 @@ function showCardDetails(cardId) {
     return;
   }
 
-  const keywordSet = getKeywordSet(cardData, readingCard.orientation);
+  const meaningSet = getMeaningSet(cardData, readingCard.orientation);
+  const meaningHTML = meaningSet.meaning
+    ? `<p><strong>${meaningSet.label}:</strong> ${meaningSet.meaning}</p>`
+    : `<p><strong>${meaningSet.label}:</strong> ${meaningSet.keywords.join(", ")}</p>`;
 
   details.innerHTML = `
   <h3>${readingCard.name} (${readingCard.orientation})</h3>
@@ -298,7 +302,7 @@ function showCardDetails(cardId) {
   <p><strong>Element:</strong> ${cardData.element}</p>
   <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
   <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-  <p><strong>${keywordSet.label}:</strong> ${keywordSet.keywords.join(", ")}</p>
+  ${meaningHTML}
 `;
 }
 
@@ -341,7 +345,10 @@ function renderCardDetailsList() {
     .map(function(readingCard, index) {
       const cardData = tarotCards[readingCard.name];
 
-      const keywordSet = getKeywordSet(cardData, readingCard.orientation);
+      const meaningSet = getMeaningSet(cardData, readingCard.orientation);
+      const meaningHTML = meaningSet.meaning
+        ? `<p><strong>${meaningSet.label}:</strong> ${meaningSet.meaning}</p>`
+        : `<p><strong>${meaningSet.label}:</strong> ${meaningSet.keywords.join(", ")}</p>`;
 
       let clarifierNote = "";
       let clarifiedByNote = "";
@@ -386,7 +393,7 @@ function renderCardDetailsList() {
           <p><strong>Element:</strong> ${cardData.element}</p>
           <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
           <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-          <p><strong>${keywordSet.label}:</strong> ${keywordSet.keywords.join(", ")}</p>
+          ${meaningHTML}
         </article>
       `;
     })
