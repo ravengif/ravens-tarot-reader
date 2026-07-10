@@ -1,105 +1,145 @@
- function normalizeText(text) {
-  return text
+/*
+  Raven's Tarot Reader
+  Multi-spread reading sessions, card clarifiers, spread clarifiers,
+  editable questions, generated summaries, and TXT export.
+
+  This file expects:
+  - cards.js to load first and define `tarotCards`
+  - Existing HTML IDs:
+      cardName, orientation, readingTheme, reading,
+      cardList, patterns, cardDetailsList
+  - Optional HTML ID:
+      selectedCardDetails
+*/
+
+"use strict";
+
+/* -------------------------------------------------------------------------- */
+/* Utilities                                                                  */
+/* -------------------------------------------------------------------------- */
+
+function normalizeText(text) {
+  return String(text || "")
     .toLowerCase()
     .trim()
     .replace(/\s+/g, " ");
-    }
+}
 
-      function createCardAliases() {
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function createId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function formatNaturalList(items) {
+  const cleanItems = items.filter(Boolean);
+
+  if (cleanItems.length === 0) return "";
+  if (cleanItems.length === 1) return cleanItems[0];
+  if (cleanItems.length === 2) return `${cleanItems[0]} and ${cleanItems[1]}`;
+
+  return `${cleanItems.slice(0, -1).join(", ")}, and ${cleanItems.at(-1)}`;
+}
+
+function capitalize(text) {
+  const value = String(text || "");
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Card aliases                                                               */
+/* -------------------------------------------------------------------------- */
+
+function createCardAliases() {
   const aliases = {};
 
   const numberWords = {
-    "ace": "1",
-    "two": "2",
-    "three": "3",
-    "four": "4",
-    "five": "5",
-    "six": "6",
-    "seven": "7",
-    "eight": "8",
-    "nine": "9",
-    "ten": "10"
+    ace: "1",
+    two: "2",
+    three: "3",
+    four: "4",
+    five: "5",
+    six: "6",
+    seven: "7",
+    eight: "8",
+    nine: "9",
+    ten: "10"
   };
 
   Object.keys(tarotCards).forEach(function(cardName) {
     const normalizedName = normalizeText(cardName);
 
-    // Always include the exact normalized name.
     aliases[normalizedName] = cardName;
 
-    // Major Arcana with "The" removed.
     if (normalizedName.startsWith("the ")) {
-      const withoutThe = normalizedName.replace("the ", "");
-      aliases[withoutThe] = cardName;
+      aliases[normalizedName.replace("the ", "")] = cardName;
     }
 
-    // Alternate spelling.
     if (normalizedName === "judgment") {
-      aliases["judgement"] = cardName;
+      aliases.judgement = cardName;
     }
 
-    // Wheel of Fortune shortcuts.
     if (normalizedName === "wheel of fortune") {
       aliases["wheel fortune"] = cardName;
       aliases["the wheel"] = cardName;
-      aliases["wheel"] = cardName;
+      aliases.wheel = cardName;
     }
 
-    // Hanged Man shortcuts.
     if (normalizedName === "the hanged man") {
       aliases["hanged man"] = cardName;
       aliases["the hanged one"] = cardName;
       aliases["hanged one"] = cardName;
     }
 
-    // Minor Arcana number aliases.
     Object.keys(numberWords).forEach(function(wordNumber) {
       const digitNumber = numberWords[wordNumber];
 
-      if (normalizedName.startsWith(wordNumber + " of ")) {
-        const suit = normalizedName.replace(wordNumber + " of ", "");
+      if (!normalizedName.startsWith(wordNumber + " of ")) return;
 
-        aliases[`${digitNumber} of ${suit}`] = cardName;
-        aliases[`${wordNumber} ${suit}`] = cardName;
-        aliases[`${digitNumber} ${suit}`] = cardName;
-        aliases[`${suit} ${wordNumber}`] = cardName;
-        aliases[`${suit} ${digitNumber}`] = cardName;
+      const suit = normalizedName.replace(wordNumber + " of ", "");
 
-        // Singular suit versions.
-        if (suit.endsWith("s")) {
-          const singularSuit = suit.slice(0, -1);
+      aliases[`${digitNumber} of ${suit}`] = cardName;
+      aliases[`${wordNumber} ${suit}`] = cardName;
+      aliases[`${digitNumber} ${suit}`] = cardName;
+      aliases[`${suit} ${wordNumber}`] = cardName;
+      aliases[`${suit} ${digitNumber}`] = cardName;
 
-          aliases[`${wordNumber} of ${singularSuit}`] = cardName;
-          aliases[`${digitNumber} of ${singularSuit}`] = cardName;
-          aliases[`${wordNumber} ${singularSuit}`] = cardName;
-          aliases[`${digitNumber} ${singularSuit}`] = cardName;
-          aliases[`${singularSuit} ${wordNumber}`] = cardName;
-          aliases[`${singularSuit} ${digitNumber}`] = cardName;
-        }
+      if (suit.endsWith("s")) {
+        const singularSuit = suit.slice(0, -1);
+
+        aliases[`${wordNumber} of ${singularSuit}`] = cardName;
+        aliases[`${digitNumber} of ${singularSuit}`] = cardName;
+        aliases[`${wordNumber} ${singularSuit}`] = cardName;
+        aliases[`${digitNumber} ${singularSuit}`] = cardName;
+        aliases[`${singularSuit} ${wordNumber}`] = cardName;
+        aliases[`${singularSuit} ${digitNumber}`] = cardName;
       }
     });
 
-    // Court card shortcuts.
-    const courtTitles = ["page", "knight", "queen", "king"];
+    ["page", "knight", "queen", "king"].forEach(function(courtTitle) {
+      if (!normalizedName.startsWith(courtTitle + " of ")) return;
 
-    courtTitles.forEach(function(courtTitle) {
-      if (normalizedName.startsWith(courtTitle + " of ")) {
-        const suit = normalizedName.replace(courtTitle + " of ", "");
+      const suit = normalizedName.replace(courtTitle + " of ", "");
 
-        aliases[`${courtTitle} ${suit}`] = cardName;
-        aliases[`${suit} ${courtTitle}`] = cardName;
+      aliases[`${courtTitle} ${suit}`] = cardName;
+      aliases[`${suit} ${courtTitle}`] = cardName;
 
-        if (suit.endsWith("s")) {
-          const singularSuit = suit.slice(0, -1);
+      if (suit.endsWith("s")) {
+        const singularSuit = suit.slice(0, -1);
 
-          aliases[`${courtTitle} of ${singularSuit}`] = cardName;
-          aliases[`${courtTitle} ${singularSuit}`] = cardName;
-          aliases[`${singularSuit} ${courtTitle}`] = cardName;
-        }
+        aliases[`${courtTitle} of ${singularSuit}`] = cardName;
+        aliases[`${courtTitle} ${singularSuit}`] = cardName;
+        aliases[`${singularSuit} ${courtTitle}`] = cardName;
       }
     });
 
-    // Ace shortcuts.
     if (normalizedName.startsWith("ace of ")) {
       const suit = normalizedName.replace("ace of ", "");
 
@@ -124,23 +164,84 @@
 }
 
 const cardAliases = createCardAliases();
-const currentReading = [];
 
-let activeTheme = "general";
-let activeClarifierTargetId = null;
+/* -------------------------------------------------------------------------- */
+/* Reading session state                                                      */
+/* -------------------------------------------------------------------------- */
 
-function getActiveTheme() {
-  const themeSelect = document.getElementById("readingTheme");
-
-  if (!themeSelect) {
-    return "general";
-  }
-
-  return themeSelect.value;
+function createSpread(options = {}) {
+  return {
+    id: createId("spread"),
+    number: options.number || 1,
+    type: options.type || "primary",
+    parentSpreadId: options.parentSpreadId || null,
+    question: options.question || "",
+    theme: options.theme || "general",
+    cards: [],
+    summary: "",
+    createdAt: new Date().toISOString()
+  };
 }
 
-function getMeaningSet(cardData, orientation) {
-  const theme = getActiveTheme();
+const firstSpread = createSpread({ number: 1 });
+
+const readingSession = {
+  id: createId("session"),
+  title: "",
+  createdAt: new Date().toISOString(),
+  spreads: [firstSpread]
+};
+
+let activeSpreadId = firstSpread.id;
+let activeClarifierTargetId = null;
+let selectedCardId = null;
+
+function getActiveSpread() {
+  return readingSession.spreads.find(function(spread) {
+    return spread.id === activeSpreadId;
+  });
+}
+
+function getSpreadById(spreadId) {
+  return readingSession.spreads.find(function(spread) {
+    return spread.id === spreadId;
+  });
+}
+
+function getActiveCards() {
+  const spread = getActiveSpread();
+  return spread ? spread.cards : [];
+}
+
+function setActiveSpread(spreadId) {
+  const spread = getSpreadById(spreadId);
+
+  if (!spread) return;
+
+  activeSpreadId = spreadId;
+  activeClarifierTargetId = null;
+  selectedCardId = null;
+
+  const themeSelect = document.getElementById("readingTheme");
+
+  if (themeSelect) {
+    themeSelect.value = spread.theme || "general";
+  }
+
+  renderAll();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Themes and meanings                                                        */
+/* -------------------------------------------------------------------------- */
+
+function getActiveTheme() {
+  const spread = getActiveSpread();
+  return spread ? spread.theme || "general" : "general";
+}
+
+function getMeaningSet(cardData, orientation, themeOverride) {
+  const theme = themeOverride || getActiveTheme();
 
   if (
     theme !== "general" &&
@@ -149,345 +250,308 @@ function getMeaningSet(cardData, orientation) {
     cardData.themeMeanings[theme][orientation]
   ) {
     return {
-      label: `${theme.charAt(0).toUpperCase() + theme.slice(1)} ${orientation} meaning`,
-      meaning: cardData.themeMeanings[theme][orientation]
+      label: `${capitalize(theme)} ${orientation} meaning`,
+      meaning: cardData.themeMeanings[theme][orientation],
+      keywords: []
     };
   }
 
   return {
     label: `${orientation} keywords`,
+    meaning: "",
     keywords: orientation === "upright" ? cardData.upright : cardData.reversed
   };
 }
 
 function updateTheme() {
-  activeTheme = getActiveTheme();
-  renderCardDetailsList();
+  const spread = getActiveSpread();
+  const themeSelect = document.getElementById("readingTheme");
+
+  if (!spread || !themeSelect) return;
+
+  spread.theme = themeSelect.value;
+  spread.summary = generateSpreadSummary(spread);
+
+  renderAll();
 }
 
-function getClarifiersForCard(cardId) {
-  return currentReading.filter(function(card) {
+function getClarifierMeaning(cardData, orientation) {
+  if (!cardData.clarifier) return "";
+
+  return orientation === "upright"
+    ? cardData.clarifier.upright || ""
+    : cardData.clarifier.reversed || "";
+}
+
+/* -------------------------------------------------------------------------- */
+/* Card actions                                                               */
+/* -------------------------------------------------------------------------- */
+
+function getClarifiersForCard(cardId, spread = getActiveSpread()) {
+  if (!spread) return [];
+
+  return spread.cards.filter(function(card) {
     return card.clarifiesCardId === cardId;
   });
 }
 
-function getClarifierMeaning(cardData, orientation) {
-  if (!cardData.clarifier) {
-    return "";
+function addCard() {
+  const cardInput = document.getElementById("cardName");
+  const orientationSelect = document.getElementById("orientation");
+  const spread = getActiveSpread();
+
+  if (!cardInput || !orientationSelect || !spread) {
+    alert("The reading controls could not be found.");
+    return;
   }
 
-  return orientation === "upright"
-    ? cardData.clarifier.upright
-    : cardData.clarifier.reversed;
-}
-
-function addCard() {
-  const cardName = document.getElementById("cardName").value;
-  const orientation = document.getElementById("orientation").value;
-
-  const normalizedInput = normalizeText(cardName);
+  const normalizedInput = normalizeText(cardInput.value);
   const matchingCardName = cardAliases[normalizedInput];
-  const card = tarotCards[matchingCardName];
+  const cardData = tarotCards[matchingCardName];
 
   if (!normalizedInput) {
     alert("Type a card name first.");
     return;
   }
 
-  if (!card) {
+  if (!cardData) {
     alert("Oh shit, I don't know that one. Try again?");
     return;
   }
 
-  currentReading.push({
-  id: Date.now(),
-  name: matchingCardName,
-  orientation: orientation,
-  clarifiesCardId: activeClarifierTargetId
-});
-
-  renderReading();
-  updateCardList();
-  updatePatterns();
-  renderCardDetailsList();
-
-  document.getElementById("cardName").value = "";
-}
-
-function renderReading() {
-  const reading = document.getElementById("reading");
-
-  const mainCards = currentReading.filter(function(card) {
-    return card.clarifiesCardId === null;
+  spread.cards.push({
+    id: createId("card"),
+    name: matchingCardName,
+    orientation: orientationSelect.value,
+    clarifiesCardId: activeClarifierTargetId
   });
 
-  reading.innerHTML = mainCards
-    .map(function(mainCard) {
-      const cardData = tarotCards[mainCard.name];
+  spread.summary = generateSpreadSummary(spread);
 
-      const clarifiers = currentReading.filter(function(card) {
-        return card.clarifiesCardId === mainCard.id;
-      });
-
-      const mainCardHTML = createSpreadCardHTML(mainCard, cardData, false);
-
-      const clarifierHTML = clarifiers
-        .map(function(clarifierCard) {
-          const clarifierData = tarotCards[clarifierCard.name];
-          return createSpreadCardHTML(clarifierCard, clarifierData, true);
-        })
-        .join("");
-
-      return `
-        <div class="card-stack">
-          ${mainCardHTML}
-          ${clarifierHTML}
-        </div>
-      `;
-    })
-    .join("");
-}
-
-function createSpreadCardHTML(readingCard, cardData, isClarifier) {
-  const imageClass =
-    readingCard.orientation === "reversed"
-      ? "reversed-card-image"
-      : "";
-
-  const clarifierClass = isClarifier ? "clarifier-card" : "";
-
-  const activeTargetClass =
-    activeClarifierTargetId === readingCard.id
-      ? "active-clarifier-target"
-      : "";
-
-  const clickAction = isClarifier
-    ? `showCardDetails(${readingCard.id})`
-    : `toggleClarifierTarget(${readingCard.id}); showCardDetails(${readingCard.id})`;
-
-  return `
-    <div class="spread-card ${clarifierClass} ${activeTargetClass}" onclick="${clickAction}">
-      <img class="${imageClass}" src="${cardData.image}" alt="${readingCard.name}">
-
-      <h3 class="spread-card-title">${readingCard.name}</h3>
-      <p class="spread-card-orientation">${readingCard.orientation}</p>
-    </div>
-  `;
-}
-
-function showCardDetails(cardId) {
-  const readingCard = currentReading.find(function(card) {
-    return card.id === cardId;
-  });
-
-  if (!readingCard) {
-    return;
-  }
-
-  const cardData = tarotCards[readingCard.name];
-  const details = document.getElementById("selectedCardDetails");
-
-  if (!details) {
-    return;
-  }
-
-  const meaningSet = getMeaningSet(cardData, readingCard.orientation);
-  const meaningHTML = meaningSet.meaning
-    ? `<p><strong>${meaningSet.label}:</strong> ${meaningSet.meaning}</p>`
-    : `<p><strong>${meaningSet.label}:</strong> ${meaningSet.keywords.join(", ")}</p>`;
-
-  details.innerHTML = `
-  <h3>${readingCard.name} (${readingCard.orientation})</h3>
-  <p><strong>Suit:</strong> ${cardData.suit}</p>
-  <p><strong>Element:</strong> ${cardData.element}</p>
-  <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
-  <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-  ${meaningHTML}
-`;
+  cardInput.value = "";
+  renderAll();
+  cardInput.focus();
 }
 
 function toggleClarifierTarget(cardId) {
-  const clickedCard = currentReading.find(function(card) {
+  const spread = getActiveSpread();
+
+  if (!spread) return;
+
+  const clickedCard = spread.cards.find(function(card) {
     return card.id === cardId;
   });
 
-  if (!clickedCard) {
-    return;
-  }
+  if (!clickedCard) return;
 
   if (clickedCard.clarifiesCardId !== null) {
-    alert("Clarifiers cannot receive clarifiers yet.");
+    alert("A card clarifier cannot receive another card clarifier yet.");
     return;
   }
 
-  if (activeClarifierTargetId === cardId) {
-    activeClarifierTargetId = null;
-  } else {
-    activeClarifierTargetId = cardId;
-  }
+  activeClarifierTargetId =
+    activeClarifierTargetId === cardId ? null : cardId;
 
-  renderReading();
+  renderAll();
 }
 
-function renderCardDetailsList() {
-  const detailsList = document.getElementById("cardDetailsList");
+function showCardDetails(cardId) {
+  selectedCardId = cardId;
+  renderSelectedCardDetails();
+}
 
-  if (!detailsList) {
-    return;
-  }
+function removeCard(cardId) {
+  const spread = getActiveSpread();
 
-  if (currentReading.length === 0) {
-    detailsList.innerHTML = `<p>Add cards to see their meanings here.</p>`;
-    return;
-  }
+  if (!spread) return;
 
-  detailsList.innerHTML = currentReading
-    .map(function(readingCard, index) {
-      const cardData = tarotCards[readingCard.name];
-
-      const meaningSet = getMeaningSet(cardData, readingCard.orientation);
-      const meaningHTML = meaningSet.meaning
-        ? `<p><strong>${meaningSet.label}:</strong> ${meaningSet.meaning}</p>`
-        : `<p><strong>${meaningSet.label}:</strong> ${meaningSet.keywords.join(", ")}</p>`;
-
-      let clarifierNote = "";
-      let clarifiedByNote = "";
-      let detailClass = "";
-
-      if (readingCard.clarifiesCardId !== null) {
-        const clarifiedCard = currentReading.find(function(card) {
-          return card.id === readingCard.clarifiesCardId;
-        });
-
-        const clarifiedName = clarifiedCard ? clarifiedCard.name : "another card";
-        const clarifierMeaning = getClarifierMeaning(cardData, readingCard.orientation);
-
-        detailClass = "card-detail-clarifier";
-
-        clarifierNote = `
-          <p><strong>Clarifies:</strong> ${clarifiedName}</p>
-          <p><strong>As a clarifier:</strong> ${clarifierMeaning}</p>
-        `;
-      } else {
-        const clarifyingCards = getClarifiersForCard(readingCard.id);
-
-        if (clarifyingCards.length > 0) {
-          const clarifierNames = clarifyingCards
-            .map(function(card) {
-              return `${card.name} (${card.orientation})`;
-            })
-            .join(", ");
-
-          clarifiedByNote = `
-            <p class="clarified-by-note"><strong>Clarified by:</strong> ${clarifierNames}</p>
-          `;
-        }
-      }
-
-      return `
-        <article class="card-detail-entry ${detailClass}">
-          <h3>${index + 1}. ${readingCard.name} (${readingCard.orientation})</h3>
-          ${clarifiedByNote}
-          ${clarifierNote}
-          <p><strong>Suit:</strong> ${cardData.suit}</p>
-          <p><strong>Element:</strong> ${cardData.element}</p>
-          <p><strong>Astrology:</strong> ${cardData.astrology.join(", ")}</p>
-          <p><strong>General keywords:</strong> ${cardData.keywords.join(", ")}</p>
-          ${meaningHTML}
-        </article>
-      `;
+  const dependentClarifierIds = spread.cards
+    .filter(function(card) {
+      return card.clarifiesCardId === cardId;
     })
-    .join("");
+    .map(function(card) {
+      return card.id;
+    });
+
+  spread.cards = spread.cards.filter(function(card) {
+    return card.id !== cardId && !dependentClarifierIds.includes(card.id);
+  });
+
+  if (activeClarifierTargetId === cardId) activeClarifierTargetId = null;
+  if (selectedCardId === cardId) selectedCardId = null;
+
+  spread.summary = generateSpreadSummary(spread);
+  renderAll();
 }
 
-  function updateCardList() {
-  const cardList = document.getElementById("cardList");
+/* -------------------------------------------------------------------------- */
+/* Spread actions                                                             */
+/* -------------------------------------------------------------------------- */
 
-  cardList.innerHTML = currentReading
-    .map(function(card, index) {
-      return `<li>${index + 1}. ${card.name} (${card.orientation})</li>`;
-    })
-    .join("");
+function updateSpreadQuestion(spreadId, question) {
+  const spread = getSpreadById(spreadId);
+
+  if (!spread) return;
+
+  spread.question = question;
+  renderSpreadNavigation();
 }
+
+function createClarifyingSpread(parentSpreadId) {
+  const parentSpread = getSpreadById(parentSpreadId);
+
+  if (!parentSpread) {
+    alert("The spread you wanted to clarify could not be found.");
+    return;
+  }
+
+  const newSpread = createSpread({
+    number: readingSession.spreads.length + 1,
+    type: "clarifying",
+    parentSpreadId: parentSpreadId,
+    theme: parentSpread.theme || "general"
+  });
+
+  readingSession.spreads.push(newSpread);
+  setActiveSpread(newSpread.id);
+
+  requestAnimationFrame(function() {
+    const questionInput = document.querySelector(
+      `[data-question-for="${newSpread.id}"]`
+    );
+
+    if (questionInput) questionInput.focus();
+  });
+}
+
+function deleteSpread(spreadId) {
+  if (readingSession.spreads.length === 1) {
+    alert("A reading session must keep at least one spread.");
+    return;
+  }
+
+  const childSpreads = readingSession.spreads.filter(function(spread) {
+    return spread.parentSpreadId === spreadId;
+  });
+
+  if (childSpreads.length > 0) {
+    alert("Delete or reconnect this spread's clarifying spreads first.");
+    return;
+  }
+
+  readingSession.spreads = readingSession.spreads.filter(function(spread) {
+    return spread.id !== spreadId;
+  });
+
+  readingSession.spreads.forEach(function(spread, index) {
+    spread.number = index + 1;
+  });
+
+  if (activeSpreadId === spreadId) {
+    activeSpreadId = readingSession.spreads[0].id;
+  }
+
+  renderAll();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Pattern analysis                                                           */
+/* -------------------------------------------------------------------------- */
 
 function getPatternLevel(count) {
   if (count >= 5) {
-    return {
-      level: "red",
-      score: 3,
-      label: "Dominant pattern"
-    };
+    return { level: "red", score: 3, label: "Dominant pattern" };
   }
 
   if (count >= 3) {
-    return {
-      level: "yellow",
-      score: 2,
-      label: "Clear pattern"
-    };
+    return { level: "yellow", score: 2, label: "Clear pattern" };
   }
 
   if (count >= 2) {
-    return {
-      level: "green",
-      score: 1,
-      label: "Possible pattern"
-    };
+    return { level: "green", score: 1, label: "Possible pattern" };
   }
 
   return null;
 }
 
 function getCardNumber(cardName) {
-  const numberWords = [
-    "Ace",
-    "Two",
-    "Three",
-    "Four",
-    "Five",
-    "Six",
-    "Seven",
-    "Eight",
-    "Nine",
-    "Ten"
+  const numbers = [
+    "Ace", "Two", "Three", "Four", "Five",
+    "Six", "Seven", "Eight", "Nine", "Ten"
   ];
 
-  for (let i = 0; i < numberWords.length; i++) {
-    if (cardName.startsWith(numberWords[i] + " of ")) {
-      return numberWords[i];
-    }
-  }
-
-  return null;
+  return numbers.find(function(number) {
+    return cardName.startsWith(number + " of ");
+  }) || null;
 }
 
-function updatePatterns() {
-  const patterns = document.getElementById("patterns");
-  const totalCards = currentReading.length;
+const suitPatternMessages = {
+  Wands:
+    "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.",
+  Cups:
+    "Lots of Cups points to emotion, relationships, intuition, memory, grief, longing, or attachment. The reading may be centered on what is felt rather than what is objectively clear.",
+  Swords:
+    "Lots of Swords points to thoughts, communication, fear, truth, decisions, anxiety, or conflict. The reading may be asking what story the mind is telling and whether it is true.",
+  Pentacles:
+    "Lots of Pentacles points to practical reality: money, work, health, home, resources, consistency, or long-term stability. The reading may be asking what is actually sustainable.",
+  "Major Arcana":
+    "Lots of Major Arcana suggests this reading may be pointing to something larger than a daily mood. There may be a major lesson, turning point, identity shift, or deeper spiritual pattern at play."
+};
 
-  if (totalCards === 0) {
-    patterns.innerHTML = `<p>No cards entered yet.</p>`;
-    return;
-  }
+const elementPatternMessages = {
+  Fire:
+    "Lots of Fire energy can point to passion, urgency, confidence, ambition, action, anger, or conflict. It can be motivating, but too much Fire can become impulsive, reactive, or burned out.",
+  Water:
+    "Lots of Water energy can point to feelings, memory, relationships, dreams, grief, attachment, or intuition. It can be emotionally honest, but too much Water can blur boundaries or make it hard to separate intuition from fear.",
+  Air:
+    "Lots of Air energy can point to thoughts, communication, decisions, mental pressure, analysis, or truth. It can bring insight, but too much Air can become overthinking or detachment.",
+  Earth:
+    "Lots of Earth energy can point to money, work, the body, home, resources, routine, and long-term security. It can be grounding, but too much Earth can become stagnation or fear of change."
+};
 
-  const reversedCount = currentReading.filter(function(readingCard) {
-    return readingCard.orientation === "reversed";
-  }).length;
+const numberMeanings = {
+  Ace:
+    "Aces point to beginnings, raw potential, and something new trying to emerge.",
+  Two:
+    "Twos point to choice, duality, balance, partnership, inner conflict, or weighing two sides.",
+  Three:
+    "Threes suggest growth, expression, collaboration, or initial results.",
+  Four:
+    "Fours point to structure, stability, foundation, and containment.",
+  Five:
+    "Fives often show conflict, instability, disruption, challenge, or growing pains.",
+  Six:
+    "Sixes often concern healing, support, exchange, repair, memory, recognition, or movement toward harmony.",
+  Seven:
+    "Sevens suggest complexity, assessment, defense, mystery, strategy, or uncertainty.",
+  Eight:
+    "Eights point to movement, effort, restriction, momentum, pressure, or a process already underway.",
+  Nine:
+    "Nines often show culmination, intensity, solitude, near-completion, or mounting weight.",
+  Ten:
+    "Tens show a cycle reaching its limit through fulfillment, overload, collapse, legacy, or transformation."
+};
 
-  const majorCount = currentReading.filter(function(readingCard) {
-    const cardData = tarotCards[readingCard.name];
-    return cardData.suit === "Major Arcana";
+function analyzeSpread(spread) {
+  const cards = spread ? spread.cards : [];
+  const totalCards = cards.length;
+
+  const reversedCount = cards.filter(function(card) {
+    return card.orientation === "reversed";
   }).length;
 
   const suitCounts = {};
   const elementCounts = {};
   const numberCounts = {};
 
-  currentReading.forEach(function(readingCard) {
+  cards.forEach(function(readingCard) {
     const cardData = tarotCards[readingCard.name];
 
+    if (!cardData) return;
+
     suitCounts[cardData.suit] = (suitCounts[cardData.suit] || 0) + 1;
-    elementCounts[cardData.element] = (elementCounts[cardData.element] || 0) + 1;
+    elementCounts[cardData.element] =
+      (elementCounts[cardData.element] || 0) + 1;
 
     const cardNumber = getCardNumber(readingCard.name);
 
@@ -496,152 +560,790 @@ function updatePatterns() {
     }
   });
 
-  const patternMessages = [];
+  const majorCount = suitCounts["Major Arcana"] || 0;
+  const messages = [];
+
+  const majorLevel = getPatternLevel(majorCount);
+
+  if (majorLevel) {
+    messages.push({
+      ...majorLevel,
+      count: majorCount,
+      category: "major",
+      key: "Major Arcana",
+      title: `${majorCount} Major Arcana cards`,
+      message: suitPatternMessages["Major Arcana"]
+    });
+  }
 
   const reversalLevel = getPatternLevel(reversedCount);
 
   if (reversalLevel) {
-    patternMessages.push({
-      level: reversalLevel.level,
-      score: reversalLevel.score,
+    messages.push({
+      ...reversalLevel,
       count: reversedCount,
-      label: reversalLevel.label,
+      category: "reversal",
+      key: "reversals",
       title: `${reversedCount} reversed cards`,
-      message: "Lots of reversals here. The energy may be blocked, internalized, delayed, resisted, or happening beneath the surface."
+      message:
+        "Lots of reversals here. The energy may be blocked, internalized, delayed, resisted, distorted, or happening beneath the surface."
     });
   }
 
-  Object.keys(suitCounts).forEach(function(suit) {
-    const count = suitCounts[suit];
+  Object.entries(suitCounts).forEach(function([suit, count]) {
+    if (suit === "Major Arcana") return;
+
     const patternLevel = getPatternLevel(count);
 
-    if (!patternLevel) {
-      return;
-    }
+    if (!patternLevel) return;
 
-    let message = "";
-
-    if (suit === "Wands") {
-      message = "Lots of Wands points to fire, desire, action, creativity, ambition, momentum, confidence, conflict, or instinct. The reading may be asking what someone wants and what they are willing to do about it.";
-    }
-
-    if (suit === "Cups") {
-      message = "Lots of Cups points to emotion, relationships, intuition, memory, grief, longing, or attachment. The reading may be centered on what is felt rather than what is objectively clear.";
-    }
-
-    if (suit === "Swords") {
-      message = "Lots of Swords points to thoughts, communication, fear, truth, decisions, anxiety, or conflict. The reading may be asking what story the mind is telling and whether it is true.";
-    }
-
-    if (suit === "Pentacles") {
-      message = "Lots of Pentacles points to practical reality: money, work, health, home, resources, consistency, or long-term stability. The reading may be asking what is actually sustainable.";
-    }
-
-    if (suit === "Major Arcana") {
-      message = "Lots of Major Arcana suggests this reading may be pointing to something larger than a daily mood. There may be a major lesson, turning point, identity shift, or deeper spiritual pattern at play.";
-    }
-
-    patternMessages.push({
-      level: patternLevel.level,
-      score: patternLevel.score,
-      count: count,
-      label: patternLevel.label,
+    messages.push({
+      ...patternLevel,
+      count,
+      category: "suit",
+      key: suit,
       title: `${count} ${suit} cards`,
-      message: message
+      message: suitPatternMessages[suit] || ""
     });
   });
 
-  Object.keys(elementCounts).forEach(function(element) {
-    const count = elementCounts[element];
+  Object.entries(elementCounts).forEach(function([element, count]) {
     const patternLevel = getPatternLevel(count);
 
-    if (!patternLevel) {
-      return;
-    }
+    if (!patternLevel) return;
 
-    let message = "";
-
-    if (element === "Fire") {
-      message = "Lots of Fire energy can point to passion, urgency, confidence, ambition, action, anger, or conflict. It can be motivating, but too much Fire can become impulsive, reactive, or burned out. Astrologically, Fire can echo 1st house identity, 5th house creativity or romance, and 9th house belief, travel, risk, or expansion themes.";
-    }
-
-    if (element === "Water") {
-      message = "Lots of Water energy can point to feelings, memory, relationships, dreams, grief, attachment, or intuition. It can be emotionally honest, but too much Water can blur boundaries or make it hard to separate intuition from fear. Astrologically, Water can echo 4th house home and family, 8th house intimacy or shadow work, and 12th house subconscious or spiritual themes.";
-    }
-
-    if (element === "Air") {
-      message = "Lots of Air energy can point to thoughts, communication, decisions, mental pressure, analysis, or truth. It can bring insight, but too much Air can become overthinking or detachment. Astrologically, Air can echo 3rd house communication, 7th house relationships or contracts, and 11th house friendships, networks, or community themes.";
-    }
-
-    if (element === "Earth") {
-      message = "Lots of Earth energy can point to money, work, the body, home, resources, routine, and long-term security. It can be grounding, but too much Earth can become stagnation or fear of change. Astrologically, Earth can echo 2nd house money and values, 6th house work or health routines, and 10th house career, status, or responsibility themes.";
-    }
-
-    patternMessages.push({
-      level: patternLevel.level,
-      score: patternLevel.score,
-      count: count,
-      label: patternLevel.label,
+    messages.push({
+      ...patternLevel,
+      count,
+      category: "element",
+      key: element,
       title: `${count} ${element} cards`,
-      message: message
+      message: elementPatternMessages[element] || ""
     });
   });
 
-  Object.keys(numberCounts).forEach(function(number) {
-    const count = numberCounts[number];
+  Object.entries(numberCounts).forEach(function([number, count]) {
     const patternLevel = getPatternLevel(count);
 
-    if (!patternLevel) {
-      return;
-    }
+    if (!patternLevel) return;
 
-    const numberMeanings = {
-      "Ace": "Ooh! Aces point to beginnings, raw potential, and something new trying to emerge. Something isn't here yet, BUT it's on the horizon",
-      "Two": "Twos point to choice, duality, balance, partnership, inner conflict, or the need to weigh two sides of something. A fork in a road, or a shaking of hands.",
-      "Three": "Threes suggest growth, expression, collaboration, or initial results. Whatever it is, it isn't just about you.",
-      "Four": "Fours point to structure, stability, foundation, and containment. This can be grounding, but it can also show where something has become too stagnant.",
-      "Five": "Fives often show conflict, instability, disruption, challenge, or growing pains. Something may be unstable, but the disruption can reveal what needs to change.",
-      "Six": "Sixes often talk about to healing, support, exchange, repair, memory, recognition, movement toward harmony... or the lack of these concepts.",
-      "Seven": "Sevens suggest complexity, assessment, defense, mystery, strategy, uncertainty, or the need to pause and evaluate to get PAST the unknown.",
-      "Eight": "Eights point to movement, effort, restriction, momentum, pressure, or a process already in motion. Let's GOOOOOOOO (or not, if reversed).",
-      "Nine": "Nines often show culmination, intensity, solitude, near-completion, or a situation reaching emotional, mental, or material weight. We are almost there...",
-      "Ten": "Tens show a cycle reaching its limit. This can be fulfillment, overload, collapse, legacy, or the point where something must transform. The end of a cycle."
-    };
-
-    patternMessages.push({
-      level: patternLevel.level,
-      score: patternLevel.score,
-      count: count,
-      label: patternLevel.label,
+    messages.push({
+      ...patternLevel,
+      count,
+      category: "number",
+      key: number,
       title: `${count} ${number}s`,
-      message: numberMeanings[number]
+      message: numberMeanings[number] || ""
     });
   });
 
-  patternMessages.sort(function(a, b) {
-    if (b.score !== a.score) {
-      return b.score - a.score;
-    }
-
+  messages.sort(function(a, b) {
+    if (b.score !== a.score) return b.score - a.score;
     return b.count - a.count;
   });
 
-  let patternHTML = `
-    <p><strong>Total cards:</strong> ${totalCards}</p>
-    <p><strong>Reversals:</strong> ${reversedCount}</p>
-    <p><strong>Major Arcana:</strong> ${majorCount}</p>
-  `;
+  return {
+    totalCards,
+    reversedCount,
+    majorCount,
+    suitCounts,
+    elementCounts,
+    numberCounts,
+    messages
+  };
+}
 
-  if (patternMessages.length === 0) {
-    patternHTML += `<p>No major patterns detected yet. Add more cards to build the reading.</p>`;
+/* -------------------------------------------------------------------------- */
+/* Summary generation                                                         */
+/* -------------------------------------------------------------------------- */
+
+const keywordThemeGroups = {
+  "emotion and attachment": [
+    "emotion", "emotional", "feelings", "love", "relationship", "attachment",
+    "longing", "affection", "compassion", "heart", "intimacy", "connection"
+  ],
+  "grief and disappointment": [
+    "grief", "loss", "heartbreak", "regret", "sadness", "mourning",
+    "disappointment", "sorrow", "pain"
+  ],
+  "uncertainty and confusion": [
+    "uncertainty", "confusion", "illusion", "indecision", "hidden",
+    "mixed signals", "lack of clarity", "fear", "anxiety", "doubt"
+  ],
+  "avoidance and withdrawal": [
+    "avoidance", "withdrawal", "resistance", "denial", "hesitation",
+    "distance", "blocked", "delay", "isolation", "retreat", "stagnation"
+  ],
+  "communication and truth": [
+    "communication", "message", "truth", "conversation", "clarity",
+    "directness", "honesty", "conflict", "decision", "thought"
+  ],
+  "stability and practical security": [
+    "stability", "security", "commitment", "foundation", "reliability",
+    "long-term", "money", "work", "home", "resources", "health"
+  ],
+  "action and momentum": [
+    "action", "movement", "momentum", "pursuit", "initiative",
+    "motivation", "ambition", "energy", "passion", "creativity"
+  ],
+  "control and boundaries": [
+    "control", "authority", "structure", "boundary", "discipline",
+    "leadership", "power", "responsibility", "restraint"
+  ],
+  "change and transformation": [
+    "change", "transformation", "ending", "beginning", "cycle",
+    "transition", "release", "rebirth", "turning point"
+  ],
+  "intuition and the unknown": [
+    "intuition", "subconscious", "mystery", "dream", "spiritual",
+    "unknown", "secret", "inner knowing"
+  ]
+};
+
+function getCardSearchText(readingCard, spread) {
+  const cardData = tarotCards[readingCard.name];
+
+  if (!cardData) return "";
+
+  const meaningSet = getMeaningSet(
+    cardData,
+    readingCard.orientation,
+    spread.theme
+  );
+
+  const parts = [
+    cardData.description || "",
+    ...(cardData.keywords || []),
+    ...(readingCard.orientation === "upright"
+      ? cardData.upright || []
+      : cardData.reversed || []),
+    meaningSet.meaning || "",
+    ...(meaningSet.keywords || [])
+  ];
+
+  if (readingCard.clarifiesCardId !== null) {
+    parts.push(getClarifierMeaning(cardData, readingCard.orientation));
   }
 
-  patternMessages.forEach(function(pattern) {
+  return normalizeText(parts.join(" "));
+}
+
+function getDominantKeywordThemes(spread) {
+  const themeScores = {};
+
+  Object.keys(keywordThemeGroups).forEach(function(theme) {
+    themeScores[theme] = 0;
+  });
+
+  spread.cards.forEach(function(readingCard) {
+    const searchText = getCardSearchText(readingCard, spread);
+
+    Object.entries(keywordThemeGroups).forEach(function([theme, terms]) {
+      const matchedTerms = terms.filter(function(term) {
+        return searchText.includes(normalizeText(term));
+      });
+
+      if (matchedTerms.length > 0) {
+        themeScores[theme] += Math.min(matchedTerms.length, 3);
+      }
+    });
+  });
+
+  return Object.entries(themeScores)
+    .filter(function([, score]) {
+      return score > 0;
+    })
+    .sort(function(a, b) {
+      return b[1] - a[1];
+    })
+    .slice(0, 3)
+    .map(function([theme]) {
+      return theme;
+    });
+}
+
+function getSpreadRelationshipSummary(spread) {
+  if (!spread.parentSpreadId) return "";
+
+  const parentSpread = getSpreadById(spread.parentSpreadId);
+
+  if (!parentSpread || parentSpread.cards.length === 0) return "";
+
+  const parentThemes = getDominantKeywordThemes(parentSpread);
+  const clarifierThemes = getDominantKeywordThemes(spread);
+
+  const sharedThemes = clarifierThemes.filter(function(theme) {
+    return parentThemes.includes(theme);
+  });
+
+  const newThemes = clarifierThemes.filter(function(theme) {
+    return !parentThemes.includes(theme);
+  });
+
+  if (sharedThemes.length > 0 && newThemes.length > 0) {
+    return `This clarifying spread reinforces ${formatNaturalList(
+      sharedThemes
+    )}, then narrows or redirects the topic toward ${formatNaturalList(
+      newThemes
+    )}.`;
+  }
+
+  if (sharedThemes.length > 0) {
+    return `This clarifying spread confirms and strengthens the earlier themes of ${formatNaturalList(
+      sharedThemes
+    )}.`;
+  }
+
+  if (newThemes.length > 0) {
+    return `This clarifying spread redirects the reading toward ${formatNaturalList(
+      newThemes
+    )}.`;
+  }
+
+  return "This spread adds detail to the earlier reading, though no strong repeated keyword cluster is detected yet.";
+}
+
+function generateSpreadSummary(spread) {
+  if (!spread || spread.cards.length === 0) {
+    return "Add cards to generate a summary.";
+  }
+
+  const analysis = analyzeSpread(spread);
+  const themes = getDominantKeywordThemes(spread);
+  const parts = [];
+
+  if (themes.length > 0) {
+    parts.push(
+      `The strongest card language points toward ${formatNaturalList(themes)}.`
+    );
+  }
+
+  const topPatterns = analysis.messages.slice(0, 3);
+
+  if (topPatterns.length > 0) {
+    const patternNames = topPatterns.map(function(pattern) {
+      if (pattern.category === "suit") return `${pattern.key} energy`;
+      if (pattern.category === "element") return `${pattern.key} energy`;
+      if (pattern.category === "number") return `repeated ${pattern.key}s`;
+      if (pattern.category === "major") return "Major Arcana emphasis";
+      return "reversed energy";
+    });
+
+    parts.push(
+      `The clearest structural patterns are ${formatNaturalList(patternNames)}.`
+    );
+  } else {
+    parts.push(
+      "No repeated suit, element, number, reversal, or Major Arcana pattern is strong enough to dominate the spread yet."
+    );
+  }
+
+  if (analysis.reversedCount >= 2) {
+    parts.push(
+      "The reversals suggest that part of the situation may be blocked, internalized, delayed, resisted, or unfolding beneath the surface."
+    );
+  }
+
+  const relationshipSummary = getSpreadRelationshipSummary(spread);
+
+  if (relationshipSummary) parts.push(relationshipSummary);
+
+  return parts.join(" ");
+}
+
+function generateFullReadingSummary() {
+  const spreadsWithCards = readingSession.spreads.filter(function(spread) {
+    return spread.cards.length > 0;
+  });
+
+  if (spreadsWithCards.length === 0) {
+    return "No cards have been added to this reading yet.";
+  }
+
+  const combinedThemes = {};
+
+  spreadsWithCards.forEach(function(spread) {
+    getDominantKeywordThemes(spread).forEach(function(theme) {
+      combinedThemes[theme] = (combinedThemes[theme] || 0) + 1;
+    });
+  });
+
+  const repeatedThemes = Object.entries(combinedThemes)
+    .sort(function(a, b) {
+      return b[1] - a[1];
+    })
+    .slice(0, 4)
+    .map(function([theme]) {
+      return theme;
+    });
+
+  const totalCards = spreadsWithCards.reduce(function(total, spread) {
+    return total + spread.cards.length;
+  }, 0);
+
+  const parts = [
+    `This reading contains ${spreadsWithCards.length} spread${
+      spreadsWithCards.length === 1 ? "" : "s"
+    } and ${totalCards} card${totalCards === 1 ? "" : "s"}.`
+  ];
+
+  if (repeatedThemes.length > 0) {
+    parts.push(
+      `Across the connected spreads, the most consistent themes are ${formatNaturalList(
+        repeatedThemes
+      )}.`
+    );
+  }
+
+  if (spreadsWithCards.length > 1) {
+    parts.push(
+      "The later spreads should be read as clarification and development of the earlier questions, rather than as unrelated messages."
+    );
+  }
+
+  return parts.join(" ");
+}
+
+/* -------------------------------------------------------------------------- */
+/* Rendering                                                                  */
+/* -------------------------------------------------------------------------- */
+
+function getSpreadDisplayTitle(spread) {
+  const question = spread.question.trim();
+
+  return question
+    ? `Reading #${spread.number}: ${question}`
+    : `Reading #${spread.number}`;
+}
+
+function renderSpreadNavigation() {
+  let navigation = document.getElementById("spreadNavigation");
+
+  if (!navigation) {
+    const reading = document.getElementById("reading");
+
+    if (!reading || !reading.parentElement) return;
+
+    navigation = document.createElement("nav");
+    navigation.id = "spreadNavigation";
+    navigation.className = "spread-navigation";
+
+    reading.parentElement.insertBefore(navigation, reading);
+  }
+
+  navigation.innerHTML = readingSession.spreads
+    .map(function(spread) {
+      const activeClass = spread.id === activeSpreadId ? "active-spread-tab" : "";
+      const parentSpread = spread.parentSpreadId
+        ? getSpreadById(spread.parentSpreadId)
+        : null;
+
+      const relationship = parentSpread
+        ? `<small>Clarifies #${parentSpread.number}</small>`
+        : `<small>Original spread</small>`;
+
+      return `
+        <button
+          type="button"
+          class="spread-tab ${activeClass}"
+          onclick="setActiveSpread('${spread.id}')"
+          title="${escapeHtml(spread.question || `Reading ${spread.number}`)}"
+        >
+          <span>${escapeHtml(getSpreadDisplayTitle(spread))}</span>
+          ${relationship}
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function renderReading() {
+  const reading = document.getElementById("reading");
+  const spread = getActiveSpread();
+
+  if (!reading || !spread) return;
+
+  const parentSpread = spread.parentSpreadId
+    ? getSpreadById(spread.parentSpreadId)
+    : null;
+
+  const parentReference = parentSpread
+    ? `
+      <div class="parent-spread-reference">
+        <strong>Clarifying Reading #${parentSpread.number}</strong>
+        <span>
+          Original question:
+          ${escapeHtml(parentSpread.question || "No question entered")}
+        </span>
+      </div>
+    `
+    : "";
+
+  const mainCards = spread.cards.filter(function(card) {
+    return card.clarifiesCardId === null;
+  });
+
+  const cardsHTML =
+    mainCards.length === 0
+      ? `<p class="empty-spread-message">Add cards to this spread.</p>`
+      : mainCards
+          .map(function(mainCard) {
+            const cardData = tarotCards[mainCard.name];
+            const clarifiers = getClarifiersForCard(mainCard.id, spread);
+
+            const mainCardHTML = createSpreadCardHTML(
+              mainCard,
+              cardData,
+              false
+            );
+
+            const clarifierHTML = clarifiers
+              .map(function(clarifierCard) {
+                return createSpreadCardHTML(
+                  clarifierCard,
+                  tarotCards[clarifierCard.name],
+                  true
+                );
+              })
+              .join("");
+
+            return `
+              <div class="card-stack">
+                ${mainCardHTML}
+                ${clarifierHTML}
+              </div>
+            `;
+          })
+          .join("");
+
+  spread.summary = generateSpreadSummary(spread);
+
+  reading.innerHTML = `
+    <section class="reading-spread ${
+      spread.type === "clarifying"
+        ? "clarifying-spread"
+        : "primary-spread"
+    }">
+      <header class="spread-heading">
+        <p class="spread-number-label">
+          ${spread.type === "clarifying" ? "Connected spread" : "Original spread"}
+        </p>
+        <h2>${escapeHtml(getSpreadDisplayTitle(spread))}</h2>
+        ${parentReference}
+
+        <label for="question-${spread.id}">
+          Question being asked
+        </label>
+
+        <textarea
+          id="question-${spread.id}"
+          class="spread-question-input"
+          data-question-for="${spread.id}"
+          placeholder="${
+            spread.type === "clarifying"
+              ? "Type the clarifying question..."
+              : "Type the main question for this reading..."
+          }"
+          rows="3"
+          oninput="updateSpreadQuestion('${spread.id}', this.value)"
+        >${escapeHtml(spread.question)}</textarea>
+      </header>
+
+      <div class="spread-table">
+        ${cardsHTML}
+      </div>
+
+      <section class="generated-summary">
+        <h3>Generated Summary</h3>
+        <p>${escapeHtml(spread.summary)}</p>
+
+        <div class="spread-action-buttons">
+          <button
+            type="button"
+            onclick="createClarifyingSpread('${spread.id}')"
+          >
+            Add Clarifying Spread
+          </button>
+
+          ${
+            readingSession.spreads.length > 1
+              ? `
+                <button
+                  type="button"
+                  onclick="deleteSpread('${spread.id}')"
+                >
+                  Delete This Spread
+                </button>
+              `
+              : ""
+          }
+
+          <button type="button" onclick="downloadReadingSummary()">
+            Download Summary as TXT File
+          </button>
+        </div>
+      </section>
+    </section>
+  `;
+}
+
+function createSpreadCardHTML(readingCard, cardData, isClarifier) {
+  if (!cardData) return "";
+
+  const imageClass =
+    readingCard.orientation === "reversed"
+      ? "reversed-card-image"
+      : "";
+
+  const clarifierClass = isClarifier ? "clarifier-card" : "";
+  const activeTargetClass =
+    activeClarifierTargetId === readingCard.id
+      ? "active-clarifier-target"
+      : "";
+
+  const clickAction = isClarifier
+    ? `showCardDetails('${readingCard.id}')`
+    : `toggleClarifierTarget('${readingCard.id}'); showCardDetails('${readingCard.id}')`;
+
+  return `
+    <div class="spread-card ${clarifierClass} ${activeTargetClass}">
+      ${
+        isClarifier
+          ? `<span class="clarifier-badge">Clarifier</span>`
+          : ""
+      }
+
+      <button
+        type="button"
+        class="spread-card-main-button"
+        onclick="${clickAction}"
+      >
+        <img
+          class="${imageClass}"
+          src="${escapeHtml(cardData.image)}"
+          alt="${escapeHtml(readingCard.name)}"
+        >
+
+        <h3 class="spread-card-title">${escapeHtml(readingCard.name)}</h3>
+        <p class="spread-card-orientation">
+          ${escapeHtml(readingCard.orientation)}
+        </p>
+      </button>
+
+      <button
+        type="button"
+        class="remove-card-button"
+        onclick="event.stopPropagation(); removeCard('${readingCard.id}')"
+        aria-label="Remove ${escapeHtml(readingCard.name)}"
+      >
+        Remove
+      </button>
+    </div>
+  `;
+}
+
+function renderSelectedCardDetails() {
+  const details = document.getElementById("selectedCardDetails");
+  const spread = getActiveSpread();
+
+  if (!details || !spread) return;
+
+  const readingCard = spread.cards.find(function(card) {
+    return card.id === selectedCardId;
+  });
+
+  if (!readingCard) {
+    details.innerHTML = "";
+    return;
+  }
+
+  const cardData = tarotCards[readingCard.name];
+  const meaningSet = getMeaningSet(
+    cardData,
+    readingCard.orientation,
+    spread.theme
+  );
+
+  const meaningHTML = meaningSet.meaning
+    ? `<p><strong>${escapeHtml(meaningSet.label)}:</strong> ${escapeHtml(
+        meaningSet.meaning
+      )}</p>`
+    : `<p><strong>${escapeHtml(meaningSet.label)}:</strong> ${escapeHtml(
+        meaningSet.keywords.join(", ")
+      )}</p>`;
+
+  details.innerHTML = `
+    <h3>
+      ${escapeHtml(readingCard.name)}
+      (${escapeHtml(readingCard.orientation)})
+    </h3>
+    <p><strong>Suit:</strong> ${escapeHtml(cardData.suit)}</p>
+    <p><strong>Element:</strong> ${escapeHtml(cardData.element)}</p>
+    <p><strong>Astrology:</strong> ${escapeHtml(
+      (cardData.astrology || []).join(", ")
+    )}</p>
+    <p><strong>General keywords:</strong> ${escapeHtml(
+      (cardData.keywords || []).join(", ")
+    )}</p>
+    ${meaningHTML}
+  `;
+}
+
+function renderCardDetailsList() {
+  const detailsList = document.getElementById("cardDetailsList");
+  const spread = getActiveSpread();
+
+  if (!detailsList || !spread) return;
+
+  if (spread.cards.length === 0) {
+    detailsList.innerHTML =
+      `<p>Add cards to see their meanings here.</p>`;
+    return;
+  }
+
+  detailsList.innerHTML = spread.cards
+    .map(function(readingCard, index) {
+      const cardData = tarotCards[readingCard.name];
+      const meaningSet = getMeaningSet(
+        cardData,
+        readingCard.orientation,
+        spread.theme
+      );
+
+      const meaningHTML = meaningSet.meaning
+        ? `<p><strong>${escapeHtml(meaningSet.label)}:</strong> ${escapeHtml(
+            meaningSet.meaning
+          )}</p>`
+        : `<p><strong>${escapeHtml(meaningSet.label)}:</strong> ${escapeHtml(
+            meaningSet.keywords.join(", ")
+          )}</p>`;
+
+      let clarifierNote = "";
+      let clarifiedByNote = "";
+      let detailClass = "";
+
+      if (readingCard.clarifiesCardId !== null) {
+        const clarifiedCard = spread.cards.find(function(card) {
+          return card.id === readingCard.clarifiesCardId;
+        });
+
+        const clarifiedName = clarifiedCard
+          ? clarifiedCard.name
+          : "another card";
+
+        detailClass = "card-detail-clarifier";
+
+        clarifierNote = `
+          <p><strong>Clarifies:</strong> ${escapeHtml(clarifiedName)}</p>
+          <p><strong>As a clarifier:</strong> ${escapeHtml(
+            getClarifierMeaning(cardData, readingCard.orientation) ||
+              "No separate clarifier description has been added for this card yet."
+          )}</p>
+        `;
+      } else {
+        const clarifyingCards = getClarifiersForCard(
+          readingCard.id,
+          spread
+        );
+
+        if (clarifyingCards.length > 0) {
+          clarifiedByNote = `
+            <p class="clarified-by-note">
+              <strong>Clarified by:</strong>
+              ${escapeHtml(
+                clarifyingCards
+                  .map(function(card) {
+                    return `${card.name} (${card.orientation})`;
+                  })
+                  .join(", ")
+              )}
+            </p>
+          `;
+        }
+      }
+
+      return `
+        <article class="card-detail-entry ${detailClass}">
+          <h3>
+            ${index + 1}. ${escapeHtml(readingCard.name)}
+            (${escapeHtml(readingCard.orientation)})
+          </h3>
+          ${clarifiedByNote}
+          ${clarifierNote}
+          <p><strong>Suit:</strong> ${escapeHtml(cardData.suit)}</p>
+          <p><strong>Element:</strong> ${escapeHtml(cardData.element)}</p>
+          <p><strong>Astrology:</strong> ${escapeHtml(
+            (cardData.astrology || []).join(", ")
+          )}</p>
+          <p><strong>General keywords:</strong> ${escapeHtml(
+            (cardData.keywords || []).join(", ")
+          )}</p>
+          ${meaningHTML}
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function updateCardList() {
+  const cardList = document.getElementById("cardList");
+  const spread = getActiveSpread();
+
+  if (!cardList || !spread) return;
+
+  if (spread.cards.length === 0) {
+    cardList.innerHTML = `<li>No cards entered yet.</li>`;
+    return;
+  }
+
+  cardList.innerHTML = spread.cards
+    .map(function(card, index) {
+      const clarifierLabel =
+        card.clarifiesCardId !== null ? " — clarifier" : "";
+
+      return `
+        <li>
+          ${index + 1}. ${escapeHtml(card.name)}
+          (${escapeHtml(card.orientation)})${clarifierLabel}
+        </li>
+      `;
+    })
+    .join("");
+}
+
+function updatePatterns() {
+  const patterns = document.getElementById("patterns");
+  const spread = getActiveSpread();
+
+  if (!patterns || !spread) return;
+
+  const analysis = analyzeSpread(spread);
+
+  if (analysis.totalCards === 0) {
+    patterns.innerHTML = `<p>No cards entered yet.</p>`;
+    return;
+  }
+
+  let patternHTML = `
+    <p><strong>Total cards:</strong> ${analysis.totalCards}</p>
+    <p><strong>Reversals:</strong> ${analysis.reversedCount}</p>
+    <p><strong>Major Arcana:</strong> ${analysis.majorCount}</p>
+  `;
+
+  if (analysis.messages.length === 0) {
+    patternHTML += `
+      <p>
+        No major patterns detected yet. Add more cards to build the reading.
+      </p>
+    `;
+  }
+
+  analysis.messages.forEach(function(pattern) {
     patternHTML += `
       <div class="pattern-message pattern-${pattern.level}">
-        <span class="pattern-label">${pattern.label}</span>
-        <h3>${pattern.title}</h3>
-        <p>${pattern.message}</p>
+        <span class="pattern-label">${escapeHtml(pattern.label)}</span>
+        <h3>${escapeHtml(pattern.title)}</h3>
+        <p>${escapeHtml(pattern.message)}</p>
       </div>
     `;
   });
@@ -649,11 +1351,220 @@ function updatePatterns() {
   patterns.innerHTML = patternHTML;
 }
 
-document.getElementById("cardName").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    addCard();
-  }
-});
+function renderAll() {
+  renderSpreadNavigation();
+  renderReading();
+  updateCardList();
+  updatePatterns();
+  renderCardDetailsList();
+  renderSelectedCardDetails();
+}
 
-document.getElementById("readingTheme").addEventListener("change", updateTheme);
+/* -------------------------------------------------------------------------- */
+/* TXT export                                                                 */
+/* -------------------------------------------------------------------------- */
+
+function getCardExportText(readingCard, index, spread) {
+  const cardData = tarotCards[readingCard.name];
+  const meaningSet = getMeaningSet(
+    cardData,
+    readingCard.orientation,
+    spread.theme
+  );
+
+  const lines = [
+    `${index + 1}. ${readingCard.name} — ${capitalize(
+      readingCard.orientation
+    )}`,
+    `   Suit: ${cardData.suit}`,
+    `   Element: ${cardData.element}`,
+    `   Astrology: ${(cardData.astrology || []).join(", ")}`,
+    `   General keywords: ${(cardData.keywords || []).join(", ")}`
+  ];
+
+  if (meaningSet.meaning) {
+    lines.push(`   ${meaningSet.label}: ${meaningSet.meaning}`);
+  } else {
+    lines.push(
+      `   ${meaningSet.label}: ${meaningSet.keywords.join(", ")}`
+    );
+  }
+
+  if (readingCard.clarifiesCardId !== null) {
+    const clarifiedCard = spread.cards.find(function(card) {
+      return card.id === readingCard.clarifiesCardId;
+    });
+
+    lines.push(
+      `   Clarifies: ${
+        clarifiedCard ? clarifiedCard.name : "another card"
+      }`
+    );
+
+    const clarifierMeaning = getClarifierMeaning(
+      cardData,
+      readingCard.orientation
+    );
+
+    if (clarifierMeaning) {
+      lines.push(`   As a clarifier: ${clarifierMeaning}`);
+    }
+  }
+
+  return lines.join("\n");
+}
+
+function buildSpreadText(spread) {
+  const parentSpread = spread.parentSpreadId
+    ? getSpreadById(spread.parentSpreadId)
+    : null;
+
+  const analysis = analyzeSpread(spread);
+  const lines = [
+    "=".repeat(60),
+    `READING #${spread.number}`
+  ];
+
+  if (parentSpread) {
+    lines.push(`CLARIFYING READING #${parentSpread.number}`);
+  }
+
+  lines.push("=".repeat(60), "");
+
+  if (parentSpread) {
+    lines.push(
+      "ORIGINAL QUESTION:",
+      parentSpread.question.trim() || "No original question entered.",
+      "",
+      "CLARIFYING QUESTION:",
+      spread.question.trim() || "No clarifying question entered."
+    );
+  } else {
+    lines.push(
+      "QUESTION:",
+      spread.question.trim() || "No question entered."
+    );
+  }
+
+  lines.push("", `THEME: ${capitalize(spread.theme)}`, "", "CARDS:");
+
+  if (spread.cards.length === 0) {
+    lines.push("No cards entered.");
+  } else {
+    spread.cards.forEach(function(card, index) {
+      lines.push(getCardExportText(card, index, spread), "");
+    });
+  }
+
+  lines.push("PATTERNS:");
+
+  if (analysis.messages.length === 0) {
+    lines.push("No major repeated patterns detected.");
+  } else {
+    analysis.messages.forEach(function(pattern) {
+      lines.push(`- ${pattern.title}: ${pattern.message}`);
+    });
+  }
+
+  lines.push(
+    "",
+    "SUMMARY:",
+    generateSpreadSummary(spread),
+    ""
+  );
+
+  return lines.join("\n");
+}
+
+function buildReadingTextFile() {
+  const date = new Date(readingSession.createdAt);
+
+  const lines = [
+    "RAVEN'S TAROT READING",
+    `Created: ${date.toLocaleString()}`,
+    ""
+  ];
+
+  readingSession.spreads.forEach(function(spread) {
+    lines.push(buildSpreadText(spread));
+  });
+
+  lines.push(
+    "=".repeat(60),
+    "FULL READING SUMMARY",
+    "=".repeat(60),
+    "",
+    generateFullReadingSummary(),
+    ""
+  );
+
+  return lines.join("\n");
+}
+
+function downloadReadingSummary() {
+  const hasCards = readingSession.spreads.some(function(spread) {
+    return spread.cards.length > 0;
+  });
+
+  if (!hasCards) {
+    alert("Add at least one card before downloading the summary.");
+    return;
+  }
+
+  const textContent = buildReadingTextFile();
+  const fileBlob = new Blob([textContent], {
+    type: "text/plain;charset=utf-8"
+  });
+
+  const fileUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement("a");
+
+  const firstQuestion =
+    readingSession.spreads[0]?.question?.trim() || "tarot-reading";
+
+  const safeTitle = firstQuestion
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-|-$/g, "")
+    .toLowerCase()
+    .slice(0, 60) || "tarot-reading";
+
+  downloadLink.href = fileUrl;
+  downloadLink.download = `${safeTitle}.txt`;
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+
+  URL.revokeObjectURL(fileUrl);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Event listeners and initial render                                         */
+/* -------------------------------------------------------------------------- */
+
+function initializeTarotReader() {
+  const cardInput = document.getElementById("cardName");
+  const themeSelect = document.getElementById("readingTheme");
+
+  if (cardInput) {
+    cardInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addCard();
+      }
+    });
+  }
+
+  if (themeSelect) {
+    themeSelect.addEventListener("change", updateTheme);
+    themeSelect.value = getActiveTheme();
+  }
+
+  renderAll();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeTarotReader);
+} else {
+  initializeTarotReader();
+}
