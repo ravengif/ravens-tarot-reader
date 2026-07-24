@@ -938,19 +938,21 @@ function renderSpreadNavigation() {
         ? getSpreadById(spread.parentSpreadId)
         : null;
 
-      const relationship = parentSpread
-        ? `<small>Clarifies #${parentSpread.number}</small>`
-        : `<small>Original spread</small>`;
+      const spreadTypeLabel = parentSpread
+        ? `Clarifying spread · clarifies #${parentSpread.number}`
+        : "Original spread";
+      const questionText = spread.question.trim() || "Question not entered yet";
 
       return `
         <button
           type="button"
           class="spread-tab ${activeClass}"
           onclick="setActiveSpread('${spread.id}')"
-          title="${escapeHtml(spread.question || `Reading ${spread.number}`)}"
+          title="${escapeHtml(questionText)}"
         >
-          <span>${escapeHtml(getSpreadDisplayTitle(spread))}</span>
-          ${relationship}
+          <span class="spread-tab-number">Reading #${spread.number}</span>
+          <span class="spread-tab-question">“${escapeHtml(questionText)}”</span>
+          <span class="spread-tab-tag">${escapeHtml(spreadTypeLabel)}</span>
         </button>
       `;
     })
@@ -1025,28 +1027,34 @@ function renderReading() {
         : "primary-spread"
     }">
       <header class="spread-heading">
-        <p class="spread-number-label">
-          ${spread.type === "clarifying" ? "Connected spread" : "Original spread"}
-        </p>
-        <h2>${escapeHtml(getSpreadDisplayTitle(spread))}</h2>
+        <p class="spread-number">Reading #${spread.number}</p>
+        <h2 class="spread-question-display">
+          “${escapeHtml(spread.question.trim() || "Question not entered yet")}”
+        </h2>
+        <span class="spread-tag ${
+          spread.type === "clarifying"
+            ? "clarifying-spread-tag"
+            : "original-spread-tag"
+        }">
+          ${spread.type === "clarifying" ? "Clarifying Spread" : "Original Spread"}
+        </span>
         ${parentReference}
 
-        <label for="question-${spread.id}">
-          Question being asked
-        </label>
-
-        <textarea
-          id="question-${spread.id}"
-          class="spread-question-input"
-          data-question-for="${spread.id}"
-          placeholder="${
-            spread.type === "clarifying"
-              ? "Type the clarifying question..."
-              : "Type the main question for this reading..."
-          }"
-          rows="3"
-          oninput="updateSpreadQuestion('${spread.id}', this.value)"
-        >${escapeHtml(spread.question)}</textarea>
+        <div class="question-editor">
+          <label for="question-${spread.id}">Edit question</label>
+          <textarea
+            id="question-${spread.id}"
+            class="spread-question-input"
+            data-question-for="${spread.id}"
+            placeholder="${
+              spread.type === "clarifying"
+                ? "Type the clarifying question..."
+                : "Type the main question for this reading..."
+            }"
+            rows="3"
+            oninput="updateSpreadQuestion('${spread.id}', this.value)"
+          >${escapeHtml(spread.question)}</textarea>
+        </div>
       </header>
 
       <div class="spread-table">

@@ -344,3 +344,288 @@ button {
   background: #f4d0d6;
   color: #6b1f35;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Reading layout refresh                                                     */
+/* -------------------------------------------------------------------------- */
+
+.spread-panel {
+  min-width: 0;
+  padding: clamp(24px, 3vw, 42px);
+}
+
+.spread-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 22px 0 34px;
+}
+
+.spread-tab {
+  display: flex;
+  flex: 0 1 310px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-height: 108px;
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.spread-tab-number {
+  font-size: 1rem;
+  opacity: 0.78;
+}
+
+.spread-tab-question {
+  font-family: Courier, serif;
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.spread-tab-tag {
+  display: inline-flex;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border: 1px solid currentColor;
+  font-family: Courier, serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.active-spread-tab {
+  box-shadow: 0 0 0 3px rgba(216, 180, 254, 0.18);
+}
+
+.reading-spread {
+  width: 100%;
+  min-width: 0;
+}
+
+.spread-heading {
+  gap: 9px;
+  margin-bottom: 32px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #6d5a7c;
+}
+
+.spread-number {
+  margin: 0;
+  color: #cdb7d8;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.05em;
+}
+
+.spread-question-display {
+  margin: 0;
+  max-width: 950px;
+  color: #fff;
+  font-family: Courier, serif;
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  font-weight: normal;
+  line-height: 1.45;
+}
+
+.spread-tag {
+  min-height: auto;
+  padding: 5px 11px;
+  font-size: 0.72rem;
+}
+
+.question-editor {
+  width: min(100%, 720px);
+  margin-top: 18px;
+}
+
+.question-editor label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 1.05rem;
+}
+
+.spread-question-input {
+  width: 100%;
+  min-height: 82px;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid #b893c9;
+  background: #f7f2f8;
+  color: #16131d;
+  font: 1rem/1.45 Courier, serif;
+}
+
+.parent-spread-reference {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 720px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-left: 3px solid #b893c9;
+  background: #211b2b;
+}
+
+/* Cards now use readable fixed minimum widths and fill available space. */
+.reading-spread .spread-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 245px));
+  gap: 26px;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+  margin: 10px 0 36px;
+}
+
+.card-stack {
+  min-width: 0;
+  gap: 14px;
+}
+
+.spread-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 405px;
+  padding: 13px;
+}
+
+.spread-card-main-button {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 320px;
+  padding: 16px;
+  border: 1px solid #b893c9;
+  background: #765184;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.spread-card-main-button img,
+.spread-card img {
+  width: auto;
+  max-width: 100%;
+  height: 210px;
+  object-fit: contain;
+  margin: 0 auto 15px;
+}
+
+.spread-card-title {
+  margin: 0 0 8px;
+  font-size: 1.65rem;
+  line-height: 1.05;
+}
+
+.spread-card-orientation {
+  margin: auto 0 0;
+  font-size: 0.94rem;
+  font-weight: bold;
+}
+
+.remove-card-button {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 12px;
+  padding: 11px 14px;
+  font-size: 1.05rem;
+}
+
+.clarifier-card {
+  margin-left: 12px;
+  transform: none;
+  opacity: 1;
+}
+
+.clarifier-card .spread-card-main-button img {
+  height: 180px;
+}
+
+.clarifier-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 8px;
+  padding: 3px 8px;
+  border: 1px solid #d8b4fe;
+  color: #d8b4fe;
+  font-family: Courier, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.generated-summary {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 14px;
+}
+
+.generated-summary h3 {
+  margin: 0 0 14px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.75rem;
+}
+
+.generated-summary p {
+  max-width: 850px;
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+
+.spread-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+  margin-top: 26px;
+}
+
+.spread-action-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 210px;
+  min-height: 54px;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 22px;
+  }
+
+  .spread-navigation {
+    flex-direction: column;
+  }
+
+  .spread-tab {
+    flex-basis: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .reading-spread .spread-table {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .reading-spread .spread-table {
+    grid-template-columns: 1fr;
+  }
+
+  .spread-action-buttons {
+    flex-direction: column;
+  }
+
+  .spread-action-buttons button {
+    width: 100%;
+  }
+}
