@@ -951,7 +951,6 @@ function renderSpreadNavigation() {
           title="${escapeHtml(questionText)}"
         >
           <span class="spread-tab-number">Reading #${spread.number}</span>
-          <span class="spread-tab-question">“${escapeHtml(questionText)}”</span>
           <span class="spread-tab-tag">${escapeHtml(spreadTypeLabel)}</span>
         </button>
       `;

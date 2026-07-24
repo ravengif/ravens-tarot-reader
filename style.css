@@ -629,3 +629,146 @@ button {
     width: 100%;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* July 24 layout correction                                                   */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --body-font: "Pixelify Sans", sans-serif;
+  --heading-font: "Jersey 10", sans-serif;
+}
+
+body,
+input,
+select,
+textarea,
+p,
+li,
+small,
+label,
+.spread-tag,
+.spread-tab-tag,
+.spread-card-orientation,
+.parent-spread-reference,
+.generated-summary p,
+.card-detail-entry p,
+.pattern-message p {
+  font-family: var(--body-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+button,
+.spread-number,
+.spread-question-display,
+.spread-card-title,
+.spread-tab-number {
+  font-family: var(--heading-font);
+}
+
+/* The #reading element is only a wrapper. Making it a grid caused the entire
+   reading section to occupy one card-width column. */
+#reading.reading-container {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/* One compact navigation tab per spread. The question appears only once,
+   in the active spread header below. */
+.spread-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.spread-tab {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 180px;
+  min-height: 76px;
+  padding: 14px 18px;
+}
+
+.spread-tab-number {
+  font-size: 1.2rem;
+}
+
+.spread-tab-tag {
+  font-family: var(--body-font);
+}
+
+.spread-tab-question {
+  display: none;
+}
+
+.spread-question-display {
+  max-width: 1000px;
+  font-family: var(--heading-font);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
+.spread-question-input {
+  font-family: var(--body-font);
+  font-size: 1.05rem;
+}
+
+/* Keep cards in horizontal rows until the viewport genuinely becomes narrow. */
+.reading-spread .spread-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 250px));
+  gap: 30px;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+}
+
+.card-stack {
+  width: 100%;
+  min-width: 0;
+}
+
+.spread-card {
+  width: 100%;
+}
+
+/* Action buttons form one spaced row, wrapping only when needed. */
+.spread-action-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.spread-action-buttons button {
+  flex: 0 1 250px;
+  min-width: 230px;
+}
+
+@media (max-width: 760px) {
+  .reading-spread .spread-table {
+    grid-template-columns: repeat(2, minmax(190px, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .reading-spread .spread-table {
+    grid-template-columns: 1fr;
+  }
+
+  .spread-action-buttons {
+    flex-direction: column;
+  }
+
+  .spread-action-buttons button {
+    width: 100%;
+    min-width: 0;
+  }
+}
