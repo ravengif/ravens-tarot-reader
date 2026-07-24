@@ -772,3 +772,261 @@ button,
     min-width: 0;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* July 24 clarifier tree + question editor cleanup                           */
+/* -------------------------------------------------------------------------- */
+
+body {
+  font-family: var(--body-font);
+}
+
+p,
+ul,
+ol,
+li,
+input,
+select,
+textarea,
+label,
+small,
+.spread-tag,
+.spread-tab-tag,
+.spread-card-orientation,
+.parent-spread-reference,
+.generated-summary p,
+.card-detail-entry p,
+.pattern-message p,
+.empty-spread-message,
+.clarifier-badge,
+.remove-card-button,
+.spread-action-buttons button,
+.entry-area button,
+.spread-question-input,
+.question-editor summary,
+.question-editor-label {
+  font-family: var(--body-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+.spread-number,
+.spread-question-display,
+.spread-card-title,
+.spread-tab-number,
+.generated-summary h3,
+.pattern-message h3,
+.card-detail-entry h3 {
+  font-family: var(--heading-font);
+}
+
+button {
+  font-family: var(--body-font);
+}
+
+.spread-question-display {
+  max-width: 840px;
+}
+
+.question-editor {
+  width: min(100%, 720px);
+  margin-top: 18px;
+  border: 1px solid #6d5a7c;
+  background: #1d1625;
+}
+
+.question-editor summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  font-size: 1rem;
+  color: #f4edf8;
+}
+
+.question-editor summary::-webkit-details-marker {
+  display: none;
+}
+
+.question-editor summary::after {
+  content: " +";
+}
+
+.question-editor-open summary::after,
+.question-editor[open] summary::after {
+  content: " −";
+}
+
+.question-editor-label {
+  display: block;
+  padding: 0 14px 8px;
+  font-size: 0.95rem;
+}
+
+.question-editor .spread-question-input {
+  display: block;
+  width: calc(100% - 28px);
+  margin: 0 14px 14px;
+}
+
+.reading-spread .spread-table {
+  grid-template-columns: repeat(auto-fill, minmax(255px, 275px));
+  gap: 34px 22px;
+}
+
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.card-stack > .spread-card {
+  width: 100%;
+}
+
+.card-stack-with-clarifiers {
+  align-items: stretch;
+}
+
+.clarifier-tree {
+  position: relative;
+  width: 100%;
+  margin-top: 2px;
+  padding-top: 26px;
+}
+
+.clarifier-tree::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 24px;
+  background: #b893c9;
+  transform: translateX(-50%);
+}
+
+.clarifier-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding-top: 18px;
+}
+
+.clarifier-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: #b893c9;
+}
+
+.single-clarifier .clarifier-row::before {
+  left: 50%;
+  right: 50%;
+}
+
+.clarifier-node {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-top: 18px;
+}
+
+.clarifier-node::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: #b893c9;
+  transform: translateX(-50%);
+}
+
+.single-clarifier .clarifier-node {
+  flex: 0 1 72%;
+}
+
+.clarifier-node .spread-card {
+  width: 100%;
+}
+
+.clarifier-card {
+  margin-left: 0;
+  min-height: auto;
+  padding: 8px;
+  border-color: #b893c9;
+}
+
+.clarifier-card .spread-card-main-button {
+  min-height: 230px;
+  padding: 12px 10px;
+}
+
+.clarifier-card .spread-card-main-button img {
+  height: 132px;
+  margin-bottom: 10px;
+}
+
+.clarifier-card .spread-card-title {
+  font-size: 1.12rem;
+  line-height: 1.05;
+}
+
+.clarifier-card .spread-card-orientation {
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+.clarifier-card .remove-card-button {
+  min-height: 40px;
+  margin-top: 8px;
+  font-size: 0.92rem;
+}
+
+.clarifier-badge {
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 900px) {
+  .reading-spread .spread-table {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .clarifier-row {
+    flex-wrap: wrap;
+  }
+
+  .clarifier-row::before {
+    display: none;
+  }
+
+  .clarifier-node {
+    flex: 0 1 70%;
+  }
+}
+
+@media (max-width: 560px) {
+  .question-editor {
+    width: 100%;
+  }
+
+  .clarifier-node,
+  .single-clarifier .clarifier-node {
+    flex-basis: 100%;
+  }
+}

@@ -196,6 +196,14 @@ let activeSpreadId = firstSpread.id;
 let activeClarifierTargetId = null;
 let selectedCardId = null;
 
+function toggleQuestionEditor(summaryElement) {
+  const details = summaryElement && summaryElement.parentElement;
+
+  if (!details) return;
+
+  details.classList.toggle("question-editor-open", details.open);
+}
+
 function getActiveSpread() {
   return readingSession.spreads.find(function(spread) {
     return spread.id === activeSpreadId;
@@ -998,18 +1006,32 @@ function renderReading() {
               false
             );
 
-            const clarifierHTML = clarifiers
-              .map(function(clarifierCard) {
-                return createSpreadCardHTML(
-                  clarifierCard,
-                  tarotCards[clarifierCard.name],
-                  true
-                );
-              })
-              .join("");
+            const clarifierHTML = clarifiers.length
+              ? `
+                <div class="clarifier-tree ${
+                  clarifiers.length > 1 ? "multiple-clarifiers" : "single-clarifier"
+                }">
+                  <div class="clarifier-row">
+                    ${clarifiers
+                      .map(function(clarifierCard) {
+                        return `
+                          <div class="clarifier-node">
+                            ${createSpreadCardHTML(
+                              clarifierCard,
+                              tarotCards[clarifierCard.name],
+                              true
+                            )}
+                          </div>
+                        `;
+                      })
+                      .join("")}
+                  </div>
+                </div>
+              `
+              : "";
 
             return `
-              <div class="card-stack">
+              <div class="card-stack ${clarifiers.length ? "card-stack-with-clarifiers" : ""}">
                 ${mainCardHTML}
                 ${clarifierHTML}
               </div>
@@ -1039,8 +1061,9 @@ function renderReading() {
         </span>
         ${parentReference}
 
-        <div class="question-editor">
-          <label for="question-${spread.id}">Edit question</label>
+        <details class="question-editor" ontoggle="toggleQuestionEditor(this.querySelector('summary'))">
+          <summary>Edit question</summary>
+          <label for="question-${spread.id}" class="question-editor-label">Question</label>
           <textarea
             id="question-${spread.id}"
             class="spread-question-input"
@@ -1053,7 +1076,7 @@ function renderReading() {
             rows="3"
             oninput="updateSpreadQuestion('${spread.id}', this.value)"
           >${escapeHtml(spread.question)}</textarea>
-        </div>
+        </details>
       </header>
 
       <div class="spread-table">
