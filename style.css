@@ -1090,3 +1090,53 @@ button {
     margin: -58px 0 -58px -10px;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Enter button final visibility fix                                           */
+/* -------------------------------------------------------------------------- */
+
+section.entry-area button.pixel-enter-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 220px !important;
+  height: 220px !important;
+  min-width: 220px !important;
+  min-height: 220px !important;
+  flex: 0 0 220px !important;
+  padding: 0 !important;
+  margin: -70px 0 -70px -12px !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+
+section.entry-area button.pixel-enter-button > img#enterButtonImage {
+  display: block !important;
+  width: 220px !important;
+  height: 220px !important;
+  max-width: none !important;
+  object-fit: contain !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  section.entry-area button.pixel-enter-button {
+    width: 190px !important;
+    height: 190px !important;
+    min-width: 190px !important;
+    min-height: 190px !important;
+    flex-basis: 190px !important;
+    margin: -58px 0 -58px -10px !important;
+  }
+
+  section.entry-area button.pixel-enter-button > img#enterButtonImage {
+    width: 190px !important;
+    height: 190px !important;
+  }
+}
