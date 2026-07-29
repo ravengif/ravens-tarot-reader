@@ -60,28 +60,28 @@ const tarotCards = {
     },
     themeMeanings: {
       love: {
-        upright: "In love, this points to attraction through charm, communication, intentional pursuit.",
-        reversed: "In love, this can still point to attraction through charm, communication, intentional pursuit, but reversed it may be blocked, delayed, avoided, or distorted through manipulation, scattered energy, unused potential, trickery."
+        upright: "In love, this points to attraction through charm, communication, intentional pursuit. It can also mean you or the subject have the willpower to shape the situation at this time. ",
+        reversed: "In love, when reversed, this could say feelings may be blocked, delayed, avoided, or the perception of feelings are being distorted through manipulation, scattered energy, unused potential, trickery."
       },
       career: {
         upright: "In career, this points to competence, visibility, using resources well.",
-        reversed: "In career, this can still point to competence, visibility, using resources well, but reversed it may show friction, delay, misalignment, or a practical block around manipulation, scattered energy, unused potential, trickery."
+        reversed: "In career this can point to a tangible block around manipulation, scattered energy, unused potential, trickery."
       },
       feelings: {
         upright: "For feelings, this points to focused interest, desire to act, persuasive energy.",
-        reversed: "For feelings, this can still point to focused interest, desire to act, persuasive energy, but reversed it may be internalized, resisted, hidden, or tangled with manipulation, scattered energy, unused potential, trickery."
+        reversed: "For feelings, this can still point to focused interest, desire to act, persuasive energy, but reversed it may be internalized, resisted, hidden, or tangled with manipulation, scattered energy, unused potential, trickery. "
       },
       advice: {
-        upright: "As advice, use what you have and be direct.",
-        reversed: "As advice, use what you have and be direct; reversed, the warning is to check where manipulation, scattered energy, unused potential, trickery may be shaping the situation."
+        upright: "As advice, use what you have and be direct, OR you have the willpower to shape the outcome at this point in time. ",
+        reversed: "As advice, the warning is to check where manipulation, scattered energy, unused potential, trickery may be shaping the situation."
       },
       outcome: {
         upright: "As an outcome, this points to progress through effort, not luck.",
-        reversed: "As an outcome, this can still point to progress through effort, not luck, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of manipulation, scattered energy, unused potential, trickery."
+        reversed: "As an outcome, this can still point to progress through effort, but it may arrive or be prevented through delay, blockage, avoidance, or the unresolved pattern of manipulation, scattered energy, unused potential, trickery."
       }
     },
     clarifier: {
-      upright: "Confirms and expands the original card by showing agency, skill, communication, and available tools. It narrows the message toward what can be intentionally shaped through action. As a clarifier, it says the situation is not only happening to you; someone has influence over how it unfolds.",
+      upright: "Confirms and expands the original card by showing agency, skill, communication, and available tools. The subject has the power here. It narrows the message toward what can be intentionally shaped through action. As a clarifier, it says the situation is not only happening to you; someone, whether that is you or the subject of this read, has influence over how it unfolds.",
       reversed: "Complicates the original card by pointing to scattered will, unused tools, mixed signals, manipulation, or performance without substance. It narrows the issue to whether someone is using their power clearly and ethically. Reversed, it may soften blame by showing insecurity or lack of confidence instead of malice."
     }
   },
