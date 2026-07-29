@@ -1569,18 +1569,74 @@ function downloadReadingSummary() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Animated Enter button                                                      */
+/* -------------------------------------------------------------------------- */
+
+const enterButtonFrames = {
+  idle: "assets/buttons/raven-button-enter-unpressed.gif",
+  pressedOne: "assets/buttons/raven-button-enter-pressed-1.gif",
+  pressedTwo: "assets/buttons/raven-button-enter-pressed-2.gif"
+};
+
+let enterButtonAnimationTimeouts = [];
+
+function preloadEnterButtonFrames() {
+  Object.values(enterButtonFrames).forEach(function(imagePath) {
+    const image = new Image();
+    image.src = imagePath;
+  });
+}
+
+function animateEnterButton() {
+  const enterButtonImage = document.getElementById("enterButtonImage");
+
+  if (!enterButtonImage) return;
+
+  enterButtonAnimationTimeouts.forEach(function(timeoutId) {
+    clearTimeout(timeoutId);
+  });
+
+  enterButtonAnimationTimeouts = [];
+  enterButtonImage.src = enterButtonFrames.pressedOne;
+
+  enterButtonAnimationTimeouts.push(
+    setTimeout(function() {
+      enterButtonImage.src = enterButtonFrames.pressedTwo;
+    }, 120)
+  );
+
+  enterButtonAnimationTimeouts.push(
+    setTimeout(function() {
+      enterButtonImage.src = enterButtonFrames.idle;
+    }, 240)
+  );
+}
+
+function submitCardWithAnimation() {
+  animateEnterButton();
+  addCard();
+}
+
+/* -------------------------------------------------------------------------- */
 /* Event listeners and initial render                                         */
 /* -------------------------------------------------------------------------- */
 
 function initializeTarotReader() {
   const cardInput = document.getElementById("cardName");
   const themeSelect = document.getElementById("readingTheme");
+  const enterButton = document.getElementById("addCardButton");
+
+  preloadEnterButtonFrames();
+
+  if (enterButton) {
+    enterButton.addEventListener("click", submitCardWithAnimation);
+  }
 
   if (cardInput) {
     cardInput.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
-        addCard();
+        submitCardWithAnimation();
       }
     });
   }
