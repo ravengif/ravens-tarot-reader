@@ -1573,9 +1573,9 @@ function downloadReadingSummary() {
 /* -------------------------------------------------------------------------- */
 
 const enterButtonFrames = {
-  idle: "assets/buttons/raven-button-enter-unpressed.gif",
-  pressedOne: "assets/buttons/raven-button-enter-pressed-1.gif",
-  pressedTwo: "assets/buttons/raven-button-enter-pressed-2.gif"
+  idle: "assets/buttons/enter-unpressed.gif",
+  pressedOne: "assets/buttons/enter-pressed-1.gif",
+  pressedTwo: "assets/buttons/enter-pressed-2.gif"
 };
 
 let enterButtonAnimationTimeouts = [];
