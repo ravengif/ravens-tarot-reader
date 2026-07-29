@@ -17,29 +17,29 @@ const tarotCards = {
     },
     themeMeanings: {
       love: {
-        upright: "In love, this points to new connection, uncertainty, casual energy, emotional openness.",
-        reversed: "In love, this can still point to new connection, uncertainty, casual energy, emotional openness, but reversed it may be blocked, delayed, avoided, or distorted through recklessness, naivety, poor planning, hesitation."
+        upright: "In love, this usually signifies a new connection, uncertainty, casual energy, emotional openness. It's just getting started, so there isn't a ton of info to pull on yet; keep this in mind as you go on in the reading. ",
+        reversed: "In love, since it's reversed, the potential or new beginning may be blocked, delayed, avoided, or something in this situatuon is affected by or distorted through recklessness, naivety, poor planning, hesitation."
       },
       career: {
-        upright: "In career, this points to fresh start, new role, leap of faith, lack of experience.",
+        upright: "In career, this points to fresh start, new role, leap of faith, lack of experience. This is a GREAT card to pull if you're job hunting, especially if paired with positive pentacle cards.",
         reversed: "In career, this can still point to fresh start, new role, leap of faith, lack of experience, but reversed it may show friction, delay, misalignment, or a practical block around recklessness, naivety, poor planning, hesitation."
       },
       feelings: {
-        upright: "For feelings, this points to curiosity, interest, playfulness, not fully serious yet.",
-        reversed: "For feelings, this can still point to curiosity, interest, playfulness, not fully serious yet, but reversed it may be internalized, resisted, hidden, or tangled with recklessness, naivety, poor planning, hesitation."
+        upright: "For feelings, this points to curiosity, interest, playfulness, not fully serious yet. Pretty common to pull with new crushes and connections, but it doesn't confirm anything romantic.",
+        reversed: "For feelings, this more likely means the subject is not fully serious yet, resisting a new start, or the subject is tangled with recklessness, naivety, poor planning, and/or hesitation."
       },
       advice: {
-        upright: "As advice, explore, but do not abandon common sense.",
-        reversed: "As advice, explore, but do not abandon common sense; reversed, the warning is to check where recklessness, naivety, poor planning, hesitation may be shaping the situation."
+        upright: "As advice, go forth and explore, but do not abandon common sense.",
+        reversed: "As advice, the warning is to check where recklessness, naivety, poor planning, hesitation may be shaping the situation."
       },
       outcome: {
-        upright: "As an outcome, this points to open-ended path, not a finalized result.",
-        reversed: "As an outcome, this can still point to open-ended path, not a finalized result, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of recklessness, naivety, poor planning, hesitation."
+        upright: "As an outcome, this points to open-ended path, not a finalized result. Nothing is set in stone yet, and the world is yours to explore. ",
+        reversed: "As an outcome, the potential outcome is tainted or currently prevented through delay, blockage, avoidance, or the unresolved pattern of recklessness, naivety, poor planning, hesitation."
       }
     },
     clarifier: {
       upright: "Expands the original card by adding a fresh-start, open-ended, or experimental quality. It narrows the clarification toward risk, innocence, spontaneity, or a situation that has not matured enough to be pinned down. As a clarifier, it often redirects a heavy reading away from finality and toward possibility.",
-      reversed: "Complicates the original card by showing na\u00efvet\u00e9, avoidance of responsibility, reckless timing, or fear of beginning. It narrows the issue to poor planning or hesitation around a leap. Reversed, it can say the original card is not wrong, but the approach is immature or underprepared."
+      reversed: "Complicates the original card by showing  avoidance of responsibility, reckless timing, or fear of beginning as it relates to the attatched card's meaning. It narrows the issue to poor planning or hesitation around a leap. Reversed, it doesn't mean the original card is not wrong, but the approach is immature or underprepared."
     }
   },
 
