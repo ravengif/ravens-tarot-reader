@@ -1602,13 +1602,13 @@ function animateEnterButton() {
   enterButtonAnimationTimeouts.push(
     setTimeout(function() {
       enterButtonImage.src = enterButtonFrames.pressedTwo;
-    }, 120)
+    }, 240)
   );
 
   enterButtonAnimationTimeouts.push(
     setTimeout(function() {
       enterButtonImage.src = enterButtonFrames.idle;
-    }, 240)
+    }, 480)
   );
 }
 
