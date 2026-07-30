@@ -20,6 +20,14 @@ label {
   font-family: "Jersey 10", sans-serif;
 }
 
+body {
+  background-color: #2b1a12; /* Fallback color */
+  background-image: url("assets/background/raven-background.png");
+  background-repeat: repeat;
+  background-position: top left;
+  background-size: 128px 128px;
+}
+
 button {
   font-family: "Jersey 10", sans-serif;
   background: #6d4c7d;
