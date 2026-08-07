@@ -144,7 +144,7 @@
         imagery: row["RWS imagery note"] || fallback.imagery || "",
         astrology: astrology.length ? astrology : (fallback.astrology || []),
         element: row["Element"] || fallback.element || "",
-        clarifierQuestion: row["Possible clarifier question"] || fallback.clarifierQuestion || "",
+        clarifierQuestion: row["Question Starters"] || row["Possible clarifier question"] || fallback.clarifierQuestion || "",
         notes: row["Notes"] || fallback.notes || ""
       };
 

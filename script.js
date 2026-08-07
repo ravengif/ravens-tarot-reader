@@ -334,27 +334,28 @@ function getFollowUpQuestion(readingCard, spread = getActiveSpread()) {
       cardData,
       readingCard.name,
       clarifiedCard ? clarifiedCard.name : null
-    );
+    ) || `What does ${readingCard.name} add to ${clarifiedCard ? clarifiedCard.name : "this card"}, and what should you look at more closely?`;
   }
 
-  return cardData.clarifierQuestion || "";
+  return cardData.clarifierQuestion ||
+    `What does ${readingCard.name} want you to look at more closely in this situation?`;
 }
 
 function renderFollowUpPromptBox(readingCard, spread = getActiveSpread()) {
   const question = getFollowUpQuestion(readingCard, spread);
 
-  if (!question || !spread) return "";
+  if (!spread) return "";
 
   return `
-    <section class="follow-up-prompt-box">
-      <p class="follow-up-prompt-label">Follow-up prompt</p>
+    <section class="follow-up-prompt-box food-for-thought-box">
+      <p class="follow-up-prompt-label">Food for Thought</p>
       <p class="follow-up-prompt-text">${escapeHtml(question)}</p>
       <button
         type="button"
         class="follow-up-prompt-open-button"
         onclick="openFollowUpPromptModal('${encodeURIComponent(question).replace(/'/g, "%27")}', '${encodeURIComponent(readingCard.name).replace(/'/g, "%27")}', '${spread.id}')"
       >
-        Use this prompt
+        Clarify Spread with This Question
       </button>
     </section>
   `;
@@ -386,11 +387,7 @@ function ensureFollowUpPromptModal() {
       <label for="followUpQuestionInput">Question</label>
       <textarea id="followUpQuestionInput" rows="5"></textarea>
 
-      <label for="followUpSpreadType">Start this as</label>
-      <select id="followUpSpreadType">
-        <option value="clarifying">Clarifying Read</option>
-        <option value="followup">Next Read</option>
-      </select>
+      <p class="follow-up-modal-note">This will create a new clarifying spread linked to your current reading. Your current spread will stay exactly where it is.</p>
 
       <p id="followUpPromptSource" class="follow-up-prompt-source"></p>
 
@@ -425,7 +422,6 @@ function ensureFollowUpPromptModal() {
 function openFollowUpPromptModal(encodedQuestion, encodedCardName, sourceSpreadId) {
   const modal = ensureFollowUpPromptModal();
   const input = document.getElementById("followUpQuestionInput");
-  const typeSelect = document.getElementById("followUpSpreadType");
   const source = document.getElementById("followUpPromptSource");
   const question = decodeURIComponent(encodedQuestion || "");
   const cardName = decodeURIComponent(encodedCardName || "");
@@ -434,7 +430,6 @@ function openFollowUpPromptModal(encodedQuestion, encodedCardName, sourceSpreadI
   modal.dataset.sourceSpreadId = sourceSpread ? sourceSpread.id : "";
 
   if (input) input.value = question;
-  if (typeSelect) typeSelect.value = "clarifying";
   if (source) {
     source.textContent = sourceSpread
       ? `Prompt from ${cardName} in Reading #${sourceSpread.number}`
@@ -466,7 +461,6 @@ function closeFollowUpPromptModal() {
 function submitFollowUpPrompt() {
   const modal = ensureFollowUpPromptModal();
   const input = document.getElementById("followUpQuestionInput");
-  const typeSelect = document.getElementById("followUpSpreadType");
   const question = input ? input.value.trim() : "";
   const sourceSpread =
     getSpreadById(modal.dataset.sourceSpreadId) || getActiveSpread();
@@ -483,7 +477,7 @@ function submitFollowUpPrompt() {
   }
 
   const submitButton = document.getElementById("followUpEnterButton");
-  const spreadType = typeSelect ? typeSelect.value : "clarifying";
+  const spreadType = "clarifying";
 
   if (submitButton) submitButton.disabled = true;
   animateEnterButton("followUpEnterButtonImage");

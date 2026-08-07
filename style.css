@@ -1179,6 +1179,23 @@ section.entry-area button.pixel-enter-button > img#enterButtonImage {
   font-size: 1rem;
 }
 
+
+.food-for-thought-box {
+  margin-top: 22px;
+}
+
+.food-for-thought-box .follow-up-prompt-label {
+  font-size: 1.65rem;
+}
+
+.follow-up-modal-note {
+  margin: 16px 0 4px;
+  padding: 10px 12px;
+  border-left: 3px solid #b893c9;
+  background: #17121f;
+  line-height: 1.5;
+}
+
 .followup-spread-tag {
   color: #f1e7f6;
   background: #604367;
