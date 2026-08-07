@@ -97,7 +97,19 @@
 
    
   </script>
-  <script src="cards.js?v=3"></script>
-<script src="script.js?v=20"></script>
+  <!-- Local card data loads first so the site always has an offline fallback. -->
+  <script src="cards.js?v=4"></script>
+
+  <!-- Google Sheet values overlay cards.js when the reference sheet is reachable. -->
+  <script src="sheet-loader.js?v=1"></script>
+
+  <!-- Wait for the Sheet attempt to finish before the reader builds card aliases. -->
+  <script>
+    (window.tarotDataReady || Promise.resolve()).finally(function () {
+      const readerScript = document.createElement("script");
+      readerScript.src = "script.js?v=21";
+      document.body.appendChild(readerScript);
+    });
+  </script>
 </body>
 </html>

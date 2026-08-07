@@ -1,5 +1,5 @@
 //note
-const tarotCards = {
+var tarotCards = {
   "The Fool": {
     suit: "Major Arcana",
     element: "Air",

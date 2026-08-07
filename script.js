@@ -264,9 +264,13 @@ function getMeaningSet(cardData, orientation, themeOverride) {
     };
   }
 
+  const spreadsheetMeaning = orientation === "upright"
+    ? cardData.uprightMeaning || cardData.description || ""
+    : cardData.reversedMeaning || "";
+
   return {
-    label: `${orientation} keywords`,
-    meaning: "",
+    label: `${capitalize(orientation)} meaning`,
+    meaning: spreadsheetMeaning,
     keywords: orientation === "upright" ? cardData.upright : cardData.reversed
   };
 }
@@ -283,12 +287,36 @@ function updateTheme() {
   renderAll();
 }
 
-function getClarifierMeaning(cardData, orientation) {
+function getClarifierMeaning(cardData, orientation, clarifierCardName, clarifiedCardName) {
+  if (clarifierCardName && clarifiedCardName && window.tarotClarifierPairs) {
+    const pair = window.tarotClarifierPairs[
+      `${clarifierCardName}|||${clarifiedCardName}`
+    ];
+
+    if (pair) {
+      return orientation === "upright"
+        ? pair.upright || ""
+        : pair.reversed || "";
+    }
+  }
+
   if (!cardData.clarifier) return "";
 
   return orientation === "upright"
     ? cardData.clarifier.upright || ""
     : cardData.clarifier.reversed || "";
+}
+
+function getClarifierQuestion(cardData, clarifierCardName, clarifiedCardName) {
+  if (clarifierCardName && clarifiedCardName && window.tarotClarifierPairs) {
+    const pair = window.tarotClarifierPairs[
+      `${clarifierCardName}|||${clarifiedCardName}`
+    ];
+
+    if (pair && pair.question) return pair.question;
+  }
+
+  return cardData.clarifierQuestion || "";
 }
 
 /* -------------------------------------------------------------------------- */
@@ -730,7 +758,18 @@ function getCardSearchText(readingCard, spread) {
   ];
 
   if (readingCard.clarifiesCardId !== null) {
-    parts.push(getClarifierMeaning(cardData, readingCard.orientation));
+    const clarifiedCard = spread.cards.find(function(card) {
+      return card.id === readingCard.clarifiesCardId;
+    });
+
+    parts.push(
+      getClarifierMeaning(
+        cardData,
+        readingCard.orientation,
+        readingCard.name,
+        clarifiedCard ? clarifiedCard.name : null
+      )
+    );
   }
 
   return normalizeText(parts.join(" "));
@@ -1216,6 +1255,8 @@ function renderSelectedCardDetails() {
       (cardData.keywords || []).join(", ")
     )}</p>
     ${meaningHTML}
+    ${cardData.imagery ? `<p><strong>RWS imagery:</strong> ${escapeHtml(cardData.imagery)}</p>` : ""}
+    ${cardData.clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(cardData.clarifierQuestion)}</p>` : ""}
   `;
 }
 
@@ -1263,12 +1304,24 @@ function renderCardDetailsList() {
 
         detailClass = "card-detail-clarifier";
 
+        const clarifierQuestion = getClarifierQuestion(
+          cardData,
+          readingCard.name,
+          clarifiedName
+        );
+
         clarifierNote = `
           <p><strong>Clarifies:</strong> ${escapeHtml(clarifiedName)}</p>
           <p><strong>As a clarifier:</strong> ${escapeHtml(
-            getClarifierMeaning(cardData, readingCard.orientation) ||
+            getClarifierMeaning(
+              cardData,
+              readingCard.orientation,
+              readingCard.name,
+              clarifiedName
+            ) ||
               "No separate clarifier description has been added for this card yet."
           )}</p>
+          ${clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(clarifierQuestion)}</p>` : ""}
         `;
       } else {
         const clarifyingCards = getClarifiersForCard(
@@ -1309,6 +1362,8 @@ function renderCardDetailsList() {
             (cardData.keywords || []).join(", ")
           )}</p>
           ${meaningHTML}
+          ${cardData.imagery ? `<p><strong>RWS imagery:</strong> ${escapeHtml(cardData.imagery)}</p>` : ""}
+          ${readingCard.clarifiesCardId === null && cardData.clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(cardData.clarifierQuestion)}</p>` : ""}
         </article>
       `;
     })
@@ -1420,6 +1475,10 @@ function getCardExportText(readingCard, index, spread) {
     );
   }
 
+  if (cardData.imagery) {
+    lines.push(`   RWS imagery: ${cardData.imagery}`);
+  }
+
   if (readingCard.clarifiesCardId !== null) {
     const clarifiedCard = spread.cards.find(function(card) {
       return card.id === readingCard.clarifiesCardId;
@@ -1433,12 +1492,26 @@ function getCardExportText(readingCard, index, spread) {
 
     const clarifierMeaning = getClarifierMeaning(
       cardData,
-      readingCard.orientation
+      readingCard.orientation,
+      readingCard.name,
+      clarifiedCard ? clarifiedCard.name : null
     );
 
     if (clarifierMeaning) {
       lines.push(`   As a clarifier: ${clarifierMeaning}`);
     }
+
+    const clarifierQuestion = getClarifierQuestion(
+      cardData,
+      readingCard.name,
+      clarifiedCard ? clarifiedCard.name : null
+    );
+
+    if (clarifierQuestion) {
+      lines.push(`   Question to ask: ${clarifierQuestion}`);
+    }
+  } else if (cardData.clarifierQuestion) {
+    lines.push(`   Question to ask: ${cardData.clarifierQuestion}`);
   }
 
   return lines.join("\n");
