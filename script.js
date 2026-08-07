@@ -319,6 +319,191 @@ function getClarifierQuestion(cardData, clarifierCardName, clarifiedCardName) {
   return cardData.clarifierQuestion || "";
 }
 
+function getFollowUpQuestion(readingCard, spread = getActiveSpread()) {
+  if (!readingCard || !spread) return "";
+
+  const cardData = tarotCards[readingCard.name];
+  if (!cardData) return "";
+
+  if (readingCard.clarifiesCardId !== null) {
+    const clarifiedCard = spread.cards.find(function(card) {
+      return card.id === readingCard.clarifiesCardId;
+    });
+
+    return getClarifierQuestion(
+      cardData,
+      readingCard.name,
+      clarifiedCard ? clarifiedCard.name : null
+    );
+  }
+
+  return cardData.clarifierQuestion || "";
+}
+
+function renderFollowUpPromptBox(readingCard, spread = getActiveSpread()) {
+  const question = getFollowUpQuestion(readingCard, spread);
+
+  if (!question || !spread) return "";
+
+  return `
+    <section class="follow-up-prompt-box">
+      <p class="follow-up-prompt-label">Follow-up prompt</p>
+      <p class="follow-up-prompt-text">${escapeHtml(question)}</p>
+      <button
+        type="button"
+        class="follow-up-prompt-open-button"
+        onclick="openFollowUpPromptModal('${encodeURIComponent(question).replace(/'/g, "%27")}', '${encodeURIComponent(readingCard.name).replace(/'/g, "%27")}', '${spread.id}')"
+      >
+        Use this prompt
+      </button>
+    </section>
+  `;
+}
+
+function ensureFollowUpPromptModal() {
+  let modal = document.getElementById("followUpPromptModal");
+
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.id = "followUpPromptModal";
+  modal.className = "follow-up-modal";
+  modal.setAttribute("aria-hidden", "true");
+
+  modal.innerHTML = `
+    <div class="follow-up-modal-backdrop" onclick="closeFollowUpPromptModal()"></div>
+    <section class="follow-up-modal-panel" role="dialog" aria-modal="true" aria-labelledby="followUpPromptTitle">
+      <button
+        type="button"
+        class="follow-up-modal-close"
+        aria-label="Close prompt"
+        onclick="closeFollowUpPromptModal()"
+      >×</button>
+
+      <h2 id="followUpPromptTitle">Use this prompt as a template for your next question</h2>
+      <p class="follow-up-modal-subtitle">Rewrite what you need to; alter the question to fit all of the ones you have! This will show up in your txt file for easy reference later.</p>
+
+      <label for="followUpQuestionInput">Question</label>
+      <textarea id="followUpQuestionInput" rows="5"></textarea>
+
+      <label for="followUpSpreadType">Start this as</label>
+      <select id="followUpSpreadType">
+        <option value="clarifying">Clarifying Read</option>
+        <option value="followup">Next Read</option>
+      </select>
+
+      <p id="followUpPromptSource" class="follow-up-prompt-source"></p>
+
+      <button
+        id="followUpEnterButton"
+        class="pixel-enter-button follow-up-enter-button"
+        type="button"
+        aria-label="Start reading with this question"
+        onclick="submitFollowUpPrompt()"
+      >
+        <img
+          id="followUpEnterButtonImage"
+          src="assets/buttons/enter-unpressed.gif"
+          alt=""
+          draggable="false"
+        >
+      </button>
+    </section>
+  `;
+
+  document.body.appendChild(modal);
+
+  modal.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+      closeFollowUpPromptModal();
+    }
+  });
+
+  return modal;
+}
+
+function openFollowUpPromptModal(encodedQuestion, encodedCardName, sourceSpreadId) {
+  const modal = ensureFollowUpPromptModal();
+  const input = document.getElementById("followUpQuestionInput");
+  const typeSelect = document.getElementById("followUpSpreadType");
+  const source = document.getElementById("followUpPromptSource");
+  const question = decodeURIComponent(encodedQuestion || "");
+  const cardName = decodeURIComponent(encodedCardName || "");
+  const sourceSpread = getSpreadById(sourceSpreadId) || getActiveSpread();
+
+  modal.dataset.sourceSpreadId = sourceSpread ? sourceSpread.id : "";
+
+  if (input) input.value = question;
+  if (typeSelect) typeSelect.value = "clarifying";
+  if (source) {
+    source.textContent = sourceSpread
+      ? `Prompt from ${cardName} in Reading #${sourceSpread.number}`
+      : `Prompt from ${cardName}`;
+  }
+
+  modal.classList.add("follow-up-modal-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("follow-up-modal-active");
+
+  requestAnimationFrame(function() {
+    if (input) {
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  });
+}
+
+function closeFollowUpPromptModal() {
+  const modal = document.getElementById("followUpPromptModal");
+
+  if (!modal) return;
+
+  modal.classList.remove("follow-up-modal-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("follow-up-modal-active");
+}
+
+function submitFollowUpPrompt() {
+  const modal = ensureFollowUpPromptModal();
+  const input = document.getElementById("followUpQuestionInput");
+  const typeSelect = document.getElementById("followUpSpreadType");
+  const question = input ? input.value.trim() : "";
+  const sourceSpread =
+    getSpreadById(modal.dataset.sourceSpreadId) || getActiveSpread();
+
+  if (!question) {
+    alert("Edit or enter a question first.");
+    if (input) input.focus();
+    return;
+  }
+
+  if (!sourceSpread) {
+    alert("The reading this prompt came from could not be found.");
+    return;
+  }
+
+  const submitButton = document.getElementById("followUpEnterButton");
+  const spreadType = typeSelect ? typeSelect.value : "clarifying";
+
+  if (submitButton) submitButton.disabled = true;
+  animateEnterButton("followUpEnterButtonImage");
+
+  setTimeout(function() {
+    const newSpread = createSpread({
+      number: readingSession.spreads.length + 1,
+      type: spreadType,
+      parentSpreadId: spreadType === "clarifying" ? sourceSpread.id : null,
+      question: question,
+      theme: sourceSpread.theme || "general"
+    });
+
+    readingSession.spreads.push(newSpread);
+    closeFollowUpPromptModal();
+    if (submitButton) submitButton.disabled = false;
+    setActiveSpread(newSpread.id);
+  }, 480);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Card actions                                                               */
 /* -------------------------------------------------------------------------- */
@@ -987,7 +1172,9 @@ function renderSpreadNavigation() {
 
       const spreadTypeLabel = parentSpread
         ? `Clarifying spread · clarifies #${parentSpread.number}`
-        : "Original spread";
+        : spread.type === "followup"
+          ? "Follow-up spread"
+          : "Original spread";
       const questionText = spread.question.trim() || "Question not entered yet";
 
       return `
@@ -1084,7 +1271,9 @@ function renderReading() {
     <section class="reading-spread ${
       spread.type === "clarifying"
         ? "clarifying-spread"
-        : "primary-spread"
+        : spread.type === "followup"
+          ? "followup-spread"
+          : "primary-spread"
     }">
       <header class="spread-heading">
         <p class="spread-number">Reading #${spread.number}</p>
@@ -1094,9 +1283,17 @@ function renderReading() {
         <span class="spread-tag ${
           spread.type === "clarifying"
             ? "clarifying-spread-tag"
-            : "original-spread-tag"
+            : spread.type === "followup"
+              ? "followup-spread-tag"
+              : "original-spread-tag"
         }">
-          ${spread.type === "clarifying" ? "Clarifying Spread" : "Original Spread"}
+          ${
+            spread.type === "clarifying"
+              ? "Clarifying Spread"
+              : spread.type === "followup"
+                ? "Follow-up Spread"
+                : "Original Spread"
+          }
         </span>
         ${parentReference}
 
@@ -1256,7 +1453,7 @@ function renderSelectedCardDetails() {
     )}</p>
     ${meaningHTML}
     ${cardData.imagery ? `<p><strong>RWS imagery:</strong> ${escapeHtml(cardData.imagery)}</p>` : ""}
-    ${cardData.clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(cardData.clarifierQuestion)}</p>` : ""}
+    ${renderFollowUpPromptBox(readingCard, spread)}
   `;
 }
 
@@ -1321,7 +1518,6 @@ function renderCardDetailsList() {
             ) ||
               "No separate clarifier description has been added for this card yet."
           )}</p>
-          ${clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(clarifierQuestion)}</p>` : ""}
         `;
       } else {
         const clarifyingCards = getClarifiersForCard(
@@ -1363,7 +1559,7 @@ function renderCardDetailsList() {
           )}</p>
           ${meaningHTML}
           ${cardData.imagery ? `<p><strong>RWS imagery:</strong> ${escapeHtml(cardData.imagery)}</p>` : ""}
-          ${readingCard.clarifiesCardId === null && cardData.clarifierQuestion ? `<p><strong>Question to ask:</strong> ${escapeHtml(cardData.clarifierQuestion)}</p>` : ""}
+          ${renderFollowUpPromptBox(readingCard, spread)}
         </article>
       `;
     })
@@ -1530,6 +1726,8 @@ function buildSpreadText(spread) {
 
   if (parentSpread) {
     lines.push(`CLARIFYING READING #${parentSpread.number}`);
+  } else if (spread.type === "followup") {
+    lines.push("FOLLOW-UP READING");
   }
 
   lines.push("=".repeat(60), "");
@@ -1660,8 +1858,8 @@ function preloadEnterButtonFrames() {
   });
 }
 
-function animateEnterButton() {
-  const enterButtonImage = document.getElementById("enterButtonImage");
+function animateEnterButton(imageId = "enterButtonImage") {
+  const enterButtonImage = document.getElementById(imageId);
 
   if (!enterButtonImage) return;
 
