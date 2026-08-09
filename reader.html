@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Raven's Tarot Reader</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=21">
+</head>
+
+<body>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="site-nav-link" href="index.html">Home</a>
+    <a class="site-nav-link active" href="reader.html">Reading Assistant</a>
+    <a class="site-nav-link" href="library.html">Card Library</a>
+  </nav>
+
+  <h1>Welcome, reader</h1>
+
+  <p>
+    Enter your cards below, and we'll share the meanings, astrology, and more behind the cards you drew. The goal is to TEACH you how to read cards, not to read them for you. 
+
+    <p> Type the cards you pull. If clarifying, click on the card you are clarifying before entering the name of the clarifying card. </p>
+
+   <p> <b>Any readings can be downloaded as a TXT file!</b> We do NOT store your information; all reads are private and belong to you only. Type the name of the question and any clarifying spreads you're pulling for, sand download for your own records. </p>
+    <p>
+      <p>
+        
+      </p>
+    </p>
+  </p>
+
+<section class="entry-area">
+  <label for="cardName">Card:</label>
+  <input id="cardName" placeholder="Example: Eight of Wands">
+
+  <label for="orientation">Orientation:</label>
+  <select id="orientation">
+    <option value="upright">Upright</option>
+    <option value="reversed">Reversed</option>
+  </select>
+
+  <label for="readingTheme">Theme:</label>
+  <select id="readingTheme">
+    <option value="general">General</option>
+    <option value="love">Love</option>
+    <option value="career">Career</option>
+    <option value="feelings">Feelings</option>
+    <option value="advice">Advice</option>
+    <option value="outcome">Outcome</option>
+  </select>
+
+  <button
+    id="addCardButton"
+    class="pixel-enter-button"
+    type="button"
+    aria-label="Add card"
+  >
+    <img
+      id="enterButtonImage"
+      src="assets/buttons/enter-unpressed.gif"
+      alt=""
+      draggable="false"
+    >
+  </button>
+</section>
+
+<main class="reading-layout">
+  <section class="spread-panel">
+  <h2>Current Spread</h2>
+
+  <div id="reading" class="reading-container"></div>
+
+  <section class="spread-details-list">
+    <h2>Card Meanings</h2>
+    <div id="cardDetailsList">
+      <p>Add cards to see their meanings here.</p>
+    </div>
+  </section>
+</section>
+
+  <aside class="pattern-panel">
+    <section class="summary-box">
+      <h2>Cards in This Reading</h2>
+      <ul id="cardList"></ul>
+    </section>
+
+    <section class="summary-box">
+      <h2>Patterns</h2>
+      <div id="patterns">
+        <p>No cards entered yet.</p>
+      </div>
+    </section>
+  </aside>
+</main>
+
+  <script>
+    
+
+   
+  </script>
+  <!-- Local card data loads first so the site always has an offline fallback. -->
+  <script src="cards.js?v=4"></script>
+
+  <!-- Google Sheet values overlay cards.js when the reference sheet is reachable. -->
+  <script src="sheet-loader.js?v=1"></script>
+
+  <!-- Wait for the Sheet attempt to finish before the reader builds card aliases. -->
+  <script>
+    (window.tarotDataReady || Promise.resolve()).finally(function () {
+      const readerScript = document.createElement("script");
+      readerScript.src = "script.js?v=22";
+      document.body.appendChild(readerScript);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Library | Raven's Tarot Reader</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=23">
+</head>
+<body>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="site-nav-link" href="index.html">Home</a>
+    <a class="site-nav-link" href="reader.html">Reading Assistant</a>
+    <a class="site-nav-link active" href="library.html">Card Library</a>
+  </nav>
+
+  <header class="library-header">
+    <p class="eyebrow">REFERENCE LIBRARY</p>
+    <h1>Know your cards</h1>
+    <p class="library-intro">
+      Browse the full deck without starting a reading. Search by card name, keyword,
+      astrology, or meaning, then open any card for the complete reference entry.
+    </p>
+  </header>
+
+  <section class="library-controls" aria-label="Library filters">
+    <div class="library-control-group library-search-group">
+      <label for="librarySearch">Search:</label>
+      <input id="librarySearch" type="search" placeholder="Try: Lovers, boundaries, Moon, career...">
+    </div>
+
+    <div class="library-control-group">
+      <label for="librarySuit">Suit:</label>
+      <select id="librarySuit">
+        <option value="all">All suits</option>
+        <option value="Major Arcana">Major Arcana</option>
+        <option value="Wands">Wands</option>
+        <option value="Cups">Cups</option>
+        <option value="Swords">Swords</option>
+        <option value="Pentacles">Pentacles</option>
+      </select>
+    </div>
+
+    <div class="library-control-group">
+      <label for="libraryElement">Element:</label>
+      <select id="libraryElement">
+        <option value="all">All elements</option>
+        <option value="Fire">Fire</option>
+        <option value="Water">Water</option>
+        <option value="Air">Air</option>
+        <option value="Earth">Earth</option>
+      </select>
+    </div>
+
+    <button id="clearLibraryFilters" type="button">Clear Filters</button>
+  </section>
+
+  <section class="library-status-row">
+    <p id="libraryCount">Loading cards...</p>
+    <p id="librarySource" class="library-source"></p>
+  </section>
+
+  <main id="cardLibraryGrid" class="card-library-grid" aria-live="polite"></main>
+
+  <dialog id="cardLibraryDialog" class="card-library-dialog">
+    <button id="closeLibraryDialog" class="library-dialog-close" type="button" aria-label="Close card details">×</button>
+    <div id="libraryDialogContent"></div>
+  </dialog>
+
+  <script src="cards.js?v=4"></script>
+  <script src="sheet-loader.js?v=2"></script>
+  <script>
+    (window.tarotDataReady || Promise.resolve()).finally(function () {
+      const libraryScript = document.createElement("script");
+      libraryScript.src = "library.js?v=1";
+      document.body.appendChild(libraryScript);
+    });
+  </script>
+</body>
+</html>
