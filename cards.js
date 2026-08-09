@@ -860,14 +860,14 @@ var tarotCards = {
     }
   },
 
-  "Judgment": {
+  "Judgement": {
     suit: "Major Arcana",
     element: "Fire",
     astrology: ["Pluto"],
-    image: "images/judgment.jpg",
+    image: "images/judgement.jpg",
     keywords: ["awakening", "reckoning", "calling", "review"],
     upright: ["accountability", "rebirth", "decision", "self-evaluation"],
-    reversed: ["self-doubt", "avoidance", "fear of judgment", "delayed decision"],
+    reversed: ["self-doubt", "avoidance", "fear of judgement", "delayed decision"],
     themeKeywords: {
       love: ["second chance", "honest conversation", "relationship reckoning"],
       career: ["calling", "major decision", "evaluation"],
@@ -878,23 +878,23 @@ var tarotCards = {
     themeMeanings: {
       love: {
         upright: "In love, this points to second chance, honest conversation, relationship reckoning.",
-        reversed: "In love, this can still point to second chance, honest conversation, relationship reckoning, but reversed it may be blocked, delayed, avoided, or distorted through self-doubt, avoidance, fear of judgment, delayed decision."
+        reversed: "In love, this can still point to second chance, honest conversation, relationship reckoning, but reversed it may be blocked, delayed, avoided, or distorted through self-doubt, avoidance, fear of judgement, delayed decision."
       },
       career: {
         upright: "In career, this points to calling, major decision, evaluation.",
-        reversed: "In career, this can still point to calling, major decision, evaluation, but reversed it may show friction, delay, misalignment, or a practical block around self-doubt, avoidance, fear of judgment, delayed decision."
+        reversed: "In career, this can still point to calling, major decision, evaluation, but reversed it may show friction, delay, misalignment, or a practical block around self-doubt, avoidance, fear of judgement, delayed decision."
       },
       feelings: {
         upright: "For feelings, this points to realization, regret, awakening.",
-        reversed: "For feelings, this can still point to realization, regret, awakening, but reversed it may be internalized, resisted, hidden, or tangled with self-doubt, avoidance, fear of judgment, delayed decision."
+        reversed: "For feelings, this can still point to realization, regret, awakening, but reversed it may be internalized, resisted, hidden, or tangled with self-doubt, avoidance, fear of judgement, delayed decision."
       },
       advice: {
         upright: "As advice, answer the call and be honest.",
-        reversed: "As advice, answer the call and be honest; reversed, the warning is to check where self-doubt, avoidance, fear of judgment, delayed decision may be shaping the situation."
+        reversed: "As advice, answer the call and be honest; reversed, the warning is to check where self-doubt, avoidance, fear of judgement, delayed decision may be shaping the situation."
       },
       outcome: {
         upright: "As an outcome, this points to decision, revival, or major clarity.",
-        reversed: "As an outcome, this can still point to decision, revival, or major clarity, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of self-doubt, avoidance, fear of judgment, delayed decision."
+        reversed: "As an outcome, this can still point to decision, revival, or major clarity, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of self-doubt, avoidance, fear of judgement, delayed decision."
       }
     },
     clarifier: {
@@ -2672,8 +2672,8 @@ var tarotCards = {
     astrology: ["Water of Air"],
     image: "images/queen-of-swords.jpg",
     keywords: ["truth", "discernment", "boundaries", "clarity"],
-    upright: ["honesty", "independence", "clear judgment", "direct speech"],
-    reversed: ["coldness", "bitterness", "harsh judgment", "poor boundaries"],
+    upright: ["honesty", "independence", "clear judgement", "direct speech"],
+    reversed: ["coldness", "bitterness", "harsh judgement", "poor boundaries"],
     themeKeywords: {
       love: ["clear boundaries", "direct communication"],
       career: ["strategy", "professionalism", "analysis"],
@@ -2684,28 +2684,28 @@ var tarotCards = {
     themeMeanings: {
       love: {
         upright: "In love, this points to clear boundaries, direct communication.",
-        reversed: "In love, this can still point to clear boundaries, direct communication, but reversed it may be blocked, delayed, avoided, or distorted through coldness, bitterness, harsh judgment, poor boundaries."
+        reversed: "In love, this can still point to clear boundaries, direct communication, but reversed it may be blocked, delayed, avoided, or distorted through coldness, bitterness, harsh judgement, poor boundaries."
       },
       career: {
         upright: "In career, this points to strategy, professionalism, analysis.",
-        reversed: "In career, this can still point to strategy, professionalism, analysis, but reversed it may show friction, delay, misalignment, or a practical block around coldness, bitterness, harsh judgment, poor boundaries."
+        reversed: "In career, this can still point to strategy, professionalism, analysis, but reversed it may show friction, delay, misalignment, or a practical block around coldness, bitterness, harsh judgement, poor boundaries."
       },
       feelings: {
         upright: "For feelings, this points to guarded, discerning, honest.",
-        reversed: "For feelings, this can still point to guarded, discerning, honest, but reversed it may be internalized, resisted, hidden, or tangled with coldness, bitterness, harsh judgment, poor boundaries."
+        reversed: "For feelings, this can still point to guarded, discerning, honest, but reversed it may be internalized, resisted, hidden, or tangled with coldness, bitterness, harsh judgement, poor boundaries."
       },
       advice: {
         upright: "As advice, be clear and do not over-explain.",
-        reversed: "As advice, be clear and do not over-explain; reversed, the warning is to check where coldness, bitterness, harsh judgment, poor boundaries may be shaping the situation."
+        reversed: "As advice, be clear and do not over-explain; reversed, the warning is to check where coldness, bitterness, harsh judgement, poor boundaries may be shaping the situation."
       },
       outcome: {
         upright: "As an outcome, this points to truth and boundaries.",
-        reversed: "As an outcome, this can still point to truth and boundaries, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of coldness, bitterness, harsh judgment, poor boundaries."
+        reversed: "As an outcome, this can still point to truth and boundaries, but reversed it may arrive through delay, blockage, avoidance, or the unresolved pattern of coldness, bitterness, harsh judgement, poor boundaries."
       }
     },
     clarifier: {
       upright: "Narrows toward boundaries, truth, discernment, independence, and emotional clarity after pain. It confirms the need to be clear rather than overly accommodating.",
-      reversed: "Complicates through coldness, bitterness, guardedness, harsh judgment, or cutting off before understanding. Reversed, it narrows the issue to whether the boundary is wise or reactive."
+      reversed: "Complicates through coldness, bitterness, guardedness, harsh judgement, or cutting off before understanding. Reversed, it narrows the issue to whether the boundary is wise or reactive."
     }
   },
 
@@ -2715,7 +2715,7 @@ var tarotCards = {
     astrology: ["Air of Air"],
     image: "images/king-of-swords.jpg",
     keywords: ["authority", "logic", "truth", "discipline"],
-    upright: ["mental mastery", "fair judgment", "strategy", "principled leadership"],
+    upright: ["mental mastery", "fair judgement", "strategy", "principled leadership"],
     reversed: ["manipulation", "cruelty", "rigidity", "misuse of intellect"],
     themeKeywords: {
       love: ["emotionally controlled", "logical", "distant"],
@@ -2747,8 +2747,8 @@ var tarotCards = {
       }
     },
     clarifier: {
-      upright: "Confirms logic, authority, detachment, strategy, truth, and formal decision-making. It narrows the original card toward reason, rules, and clear judgment.",
-      reversed: "Complicates through emotional coldness, control through intellect, rigid thinking, or words used as power. Reversed, it narrows the issue to unfair judgment, manipulation, or lack of mental clarity."
+      upright: "Confirms logic, authority, detachment, strategy, truth, and formal decision-making. It narrows the original card toward reason, rules, and clear judgement.",
+      reversed: "Complicates through emotional coldness, control through intellect, rigid thinking, or words used as power. Reversed, it narrows the issue to unfair judgement, manipulation, or lack of mental clarity."
     }
   },
 
