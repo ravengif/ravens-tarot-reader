@@ -38,16 +38,6 @@ function createId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function formatNaturalList(items) {
-  const cleanItems = items.filter(Boolean);
-
-  if (cleanItems.length === 0) return "";
-  if (cleanItems.length === 1) return cleanItems[0];
-  if (cleanItems.length === 2) return `${cleanItems[0]} and ${cleanItems[1]}`;
-
-  return `${cleanItems.slice(0, -1).join(", ")}, and ${cleanItems.at(-1)}`;
-}
-
 function capitalize(text) {
   const value = String(text || "");
   return value.charAt(0).toUpperCase() + value.slice(1);
@@ -178,7 +168,7 @@ function createSpread(options = {}) {
     question: options.question || "",
     theme: options.theme || "general",
     cards: [],
-    summary: "",
+    notes: options.notes || "",
     createdAt: new Date().toISOString()
   };
 }
@@ -282,7 +272,6 @@ function updateTheme() {
   if (!spread || !themeSelect) return;
 
   spread.theme = themeSelect.value;
-  spread.summary = generateSpreadSummary(spread);
 
   renderAll();
 }
@@ -541,7 +530,6 @@ function addCard() {
     clarifiesCardId: activeClarifierTargetId
   });
 
-  spread.summary = generateSpreadSummary(spread);
 
   cardInput.value = "";
   renderAll();
@@ -595,7 +583,6 @@ function removeCard(cardId) {
   if (activeClarifierTargetId === cardId) activeClarifierTargetId = null;
   if (selectedCardId === cardId) selectedCardId = null;
 
-  spread.summary = generateSpreadSummary(spread);
   renderAll();
 }
 
@@ -610,6 +597,14 @@ function updateSpreadQuestion(spreadId, question) {
 
   spread.question = question;
   renderSpreadNavigation();
+}
+
+function updateSpreadNotes(spreadId, notes) {
+  const spread = getSpreadById(spreadId);
+
+  if (!spread) return;
+
+  spread.notes = notes;
 }
 
 function createClarifyingSpread(parentSpreadId) {
@@ -869,268 +864,6 @@ function analyzeSpread(spread) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Summary generation                                                         */
-/* -------------------------------------------------------------------------- */
-
-const keywordThemeGroups = {
-  "emotion and attachment": [
-    "emotion", "emotional", "feelings", "love", "relationship", "attachment",
-    "longing", "affection", "compassion", "heart", "intimacy", "connection"
-  ],
-  "grief and disappointment": [
-    "grief", "loss", "heartbreak", "regret", "sadness", "mourning",
-    "disappointment", "sorrow", "pain"
-  ],
-  "uncertainty and confusion": [
-    "uncertainty", "confusion", "illusion", "indecision", "hidden",
-    "mixed signals", "lack of clarity", "fear", "anxiety", "doubt"
-  ],
-  "avoidance and withdrawal": [
-    "avoidance", "withdrawal", "resistance", "denial", "hesitation",
-    "distance", "blocked", "delay", "isolation", "retreat", "stagnation"
-  ],
-  "communication and truth": [
-    "communication", "message", "truth", "conversation", "clarity",
-    "directness", "honesty", "conflict", "decision", "thought"
-  ],
-  "stability and practical security": [
-    "stability", "security", "commitment", "foundation", "reliability",
-    "long-term", "money", "work", "home", "resources", "health"
-  ],
-  "action and momentum": [
-    "action", "movement", "momentum", "pursuit", "initiative",
-    "motivation", "ambition", "energy", "passion", "creativity"
-  ],
-  "control and boundaries": [
-    "control", "authority", "structure", "boundary", "discipline",
-    "leadership", "power", "responsibility", "restraint"
-  ],
-  "change and transformation": [
-    "change", "transformation", "ending", "beginning", "cycle",
-    "transition", "release", "rebirth", "turning point"
-  ],
-  "intuition and the unknown": [
-    "intuition", "subconscious", "mystery", "dream", "spiritual",
-    "unknown", "secret", "inner knowing"
-  ]
-};
-
-function getCardSearchText(readingCard, spread) {
-  const cardData = tarotCards[readingCard.name];
-
-  if (!cardData) return "";
-
-  const meaningSet = getMeaningSet(
-    cardData,
-    readingCard.orientation,
-    spread.theme
-  );
-
-  const parts = [
-    cardData.description || "",
-    ...(cardData.keywords || []),
-    ...(readingCard.orientation === "upright"
-      ? cardData.upright || []
-      : cardData.reversed || []),
-    meaningSet.meaning || "",
-    ...(meaningSet.keywords || [])
-  ];
-
-  if (readingCard.clarifiesCardId !== null) {
-    const clarifiedCard = spread.cards.find(function(card) {
-      return card.id === readingCard.clarifiesCardId;
-    });
-
-    parts.push(
-      getClarifierMeaning(
-        cardData,
-        readingCard.orientation,
-        readingCard.name,
-        clarifiedCard ? clarifiedCard.name : null
-      )
-    );
-  }
-
-  return normalizeText(parts.join(" "));
-}
-
-function getDominantKeywordThemes(spread) {
-  const themeScores = {};
-
-  Object.keys(keywordThemeGroups).forEach(function(theme) {
-    themeScores[theme] = 0;
-  });
-
-  spread.cards.forEach(function(readingCard) {
-    const searchText = getCardSearchText(readingCard, spread);
-
-    Object.entries(keywordThemeGroups).forEach(function([theme, terms]) {
-      const matchedTerms = terms.filter(function(term) {
-        return searchText.includes(normalizeText(term));
-      });
-
-      if (matchedTerms.length > 0) {
-        themeScores[theme] += Math.min(matchedTerms.length, 3);
-      }
-    });
-  });
-
-  return Object.entries(themeScores)
-    .filter(function([, score]) {
-      return score > 0;
-    })
-    .sort(function(a, b) {
-      return b[1] - a[1];
-    })
-    .slice(0, 3)
-    .map(function([theme]) {
-      return theme;
-    });
-}
-
-function getSpreadRelationshipSummary(spread) {
-  if (!spread.parentSpreadId) return "";
-
-  const parentSpread = getSpreadById(spread.parentSpreadId);
-
-  if (!parentSpread || parentSpread.cards.length === 0) return "";
-
-  const parentThemes = getDominantKeywordThemes(parentSpread);
-  const clarifierThemes = getDominantKeywordThemes(spread);
-
-  const sharedThemes = clarifierThemes.filter(function(theme) {
-    return parentThemes.includes(theme);
-  });
-
-  const newThemes = clarifierThemes.filter(function(theme) {
-    return !parentThemes.includes(theme);
-  });
-
-  if (sharedThemes.length > 0 && newThemes.length > 0) {
-    return `This clarifying spread reinforces ${formatNaturalList(
-      sharedThemes
-    )}, then narrows or redirects the topic toward ${formatNaturalList(
-      newThemes
-    )}.`;
-  }
-
-  if (sharedThemes.length > 0) {
-    return `This clarifying spread confirms and strengthens the earlier themes of ${formatNaturalList(
-      sharedThemes
-    )}.`;
-  }
-
-  if (newThemes.length > 0) {
-    return `This clarifying spread redirects the reading toward ${formatNaturalList(
-      newThemes
-    )}.`;
-  }
-
-  return "This spread adds detail to the earlier reading, though no strong repeated keyword cluster is detected yet.";
-}
-
-function generateSpreadSummary(spread) {
-  if (!spread || spread.cards.length === 0) {
-    return "Add cards to generate a summary.";
-  }
-
-  const analysis = analyzeSpread(spread);
-  const themes = getDominantKeywordThemes(spread);
-  const parts = [];
-
-  if (themes.length > 0) {
-    parts.push(
-      `The strongest card language points toward ${formatNaturalList(themes)}.`
-    );
-  }
-
-  const topPatterns = analysis.messages.slice(0, 3);
-
-  if (topPatterns.length > 0) {
-    const patternNames = topPatterns.map(function(pattern) {
-      if (pattern.category === "suit") return `${pattern.key} energy`;
-      if (pattern.category === "element") return `${pattern.key} energy`;
-      if (pattern.category === "number") return `repeated ${pattern.key}s`;
-      if (pattern.category === "major") return "Major Arcana emphasis";
-      return "reversed energy";
-    });
-
-    parts.push(
-      `The clearest structural patterns are ${formatNaturalList(patternNames)}.`
-    );
-  } else {
-    parts.push(
-      "No repeated suit, element, number, reversal, or Major Arcana pattern is strong enough to dominate the spread yet."
-    );
-  }
-
-  if (analysis.reversedCount >= 2) {
-    parts.push(
-      "The reversals suggest that part of the situation may be blocked, internalized, delayed, resisted, or unfolding beneath the surface."
-    );
-  }
-
-  const relationshipSummary = getSpreadRelationshipSummary(spread);
-
-  if (relationshipSummary) parts.push(relationshipSummary);
-
-  return parts.join(" ");
-}
-
-function generateFullReadingSummary() {
-  const spreadsWithCards = readingSession.spreads.filter(function(spread) {
-    return spread.cards.length > 0;
-  });
-
-  if (spreadsWithCards.length === 0) {
-    return "No cards have been added to this reading yet.";
-  }
-
-  const combinedThemes = {};
-
-  spreadsWithCards.forEach(function(spread) {
-    getDominantKeywordThemes(spread).forEach(function(theme) {
-      combinedThemes[theme] = (combinedThemes[theme] || 0) + 1;
-    });
-  });
-
-  const repeatedThemes = Object.entries(combinedThemes)
-    .sort(function(a, b) {
-      return b[1] - a[1];
-    })
-    .slice(0, 4)
-    .map(function([theme]) {
-      return theme;
-    });
-
-  const totalCards = spreadsWithCards.reduce(function(total, spread) {
-    return total + spread.cards.length;
-  }, 0);
-
-  const parts = [
-    `This reading contains ${spreadsWithCards.length} spread${
-      spreadsWithCards.length === 1 ? "" : "s"
-    } and ${totalCards} card${totalCards === 1 ? "" : "s"}.`
-  ];
-
-  if (repeatedThemes.length > 0) {
-    parts.push(
-      `Across the connected spreads, the most consistent themes are ${formatNaturalList(
-        repeatedThemes
-      )}.`
-    );
-  }
-
-  if (spreadsWithCards.length > 1) {
-    parts.push(
-      "The later spreads should be read as clarification and development of the earlier questions, rather than as unrelated messages."
-    );
-  }
-
-  return parts.join(" ");
-}
-
-/* -------------------------------------------------------------------------- */
 /* Rendering                                                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -1259,7 +992,6 @@ function renderReading() {
           })
           .join("");
 
-  spread.summary = generateSpreadSummary(spread);
 
   reading.innerHTML = `
     <section class="reading-spread ${
@@ -1313,9 +1045,17 @@ function renderReading() {
         ${cardsHTML}
       </div>
 
-      <section class="generated-summary">
-        <h3>Generated Summary</h3>
-        <p>${escapeHtml(spread.summary)}</p>
+      <section class="spread-notes-panel">
+        <h3>Your Notes</h3>
+        <p class="spread-notes-help">Write down what you notice, how the cards connect, and what you think the spread is saying.</p>
+        <textarea
+          id="notes-${spread.id}"
+          class="spread-notes-input"
+          data-notes-for="${spread.id}"
+          placeholder="Your interpretation, observations, questions, or anything you want to remember..."
+          rows="7"
+          oninput="updateSpreadNotes('${spread.id}', this.value)"
+        >${escapeHtml(spread.notes || "")}</textarea>
 
         <div class="spread-action-buttons">
           <button
@@ -1338,8 +1078,8 @@ function renderReading() {
               : ""
           }
 
-          <button type="button" onclick="downloadReadingSummary()">
-            Download Summary as TXT File
+          <button type="button" onclick="downloadReadingFile()">
+            Download Reading + Notes as TXT File
           </button>
         </div>
       </section>
@@ -1763,8 +1503,8 @@ function buildSpreadText(spread) {
 
   lines.push(
     "",
-    "SUMMARY:",
-    generateSpreadSummary(spread),
+    "YOUR NOTES:",
+    spread.notes && spread.notes.trim() ? spread.notes.trim() : "No notes entered.",
     ""
   );
 
@@ -1784,25 +1524,16 @@ function buildReadingTextFile() {
     lines.push(buildSpreadText(spread));
   });
 
-  lines.push(
-    "=".repeat(60),
-    "FULL READING SUMMARY",
-    "=".repeat(60),
-    "",
-    generateFullReadingSummary(),
-    ""
-  );
-
   return lines.join("\n");
 }
 
-function downloadReadingSummary() {
+function downloadReadingFile() {
   const hasCards = readingSession.spreads.some(function(spread) {
     return spread.cards.length > 0;
   });
 
   if (!hasCards) {
-    alert("Add at least one card before downloading the summary.");
+    alert("Add at least one card before downloading the reading.");
     return;
   }
 
