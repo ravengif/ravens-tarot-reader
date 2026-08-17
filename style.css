@@ -1,3 +1,11 @@
+body {
+  font-family: Courier, serif;
+  background: #16131d;
+  color: #f4edf8;
+  padding: 18px 40px 40px;
+  line-height: 1.5;
+}
+
 h1 {
   font-family: "Jersey 10", sans-serif;
   font-size: clamp(3rem, 8vw, 7rem);
@@ -11,6 +19,25 @@ h2,
 button,
 label {
   font-family: "Jersey 10", sans-serif;
+}
+
+body {
+  background-color: #2b1a12; /* Fallback color */
+  background-image: url("assets/background/raven-background.png");
+  background-repeat: repeat;
+  background-position: top left;
+  background-size: 128px 128px;
+}
+
+button {
+  font-family: "Jersey 10", sans-serif;
+  background: #6d4c7d;
+  color: #f8edf9;
+  border: 1px solid #b893c9;
+  border-radius: 0;
+  padding: 12px 18px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
 }
 
 .entry-area {
@@ -77,11 +104,42 @@ label {
   align-items: start;
 }
 
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spread-card {
+  border: 1px solid #6d5a7c;
+  background: #211b2b;
+  padding: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
 .spread-card img {
   width: 100%;
   height: auto;
   display: block;
   border: 1px solid #6d5a7c;
+}
+
+.spread-card-title {
+  margin: 8px 0 4px;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.2rem;
+}
+
+.spread-card-orientation {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+}
+
+.clarifier-card {
+  margin-left: 12px;
+  transform: scale(0.92);
+  border-color: #b893c9;
 }
 
 .card-controls {
@@ -102,6 +160,22 @@ label {
   transform: rotate(180deg);
 }
 
+.spread-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.spread-number {
+  margin: 0;
+  color: #cdb7d8;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+}
+
 .spread-question {
   margin: 0;
   max-width: 900px;
@@ -110,6 +184,20 @@ label {
   font-size: clamp(1.25rem, 2vw, 1.75rem);
   font-weight: normal;
   line-height: 1.45;
+}
+
+.spread-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  padding: 5px 12px;
+  border: 1px solid #a88bb8;
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .original-spread-tag {
@@ -142,6 +230,7 @@ label {
   .spread-table {
     grid-template-columns: 1fr;
   }
+
 }
 
 .pattern-message {
@@ -217,9 +306,25 @@ label {
   box-shadow: 0 0 0 4px rgba(216, 180, 254, 0.18);
 }
 
+.clarifier-card {
+  margin-left: 16px;
+  transform: scale(0.82);
+  transform-origin: top left;
+  border-color: #b893c9;
+  opacity: 0.95;
+}
+
 .clarifier-card img {
   max-height: 180px;
   object-fit: contain;
+}
+
+.clarifier-card .spread-card-title {
+  font-size: 1rem;
+}
+
+.clarifier-card .spread-card-orientation {
+  font-size: 0.8rem;
 }
 
 .clarifier-card::before {
@@ -232,21 +337,18 @@ label {
 }
 
 /* Green: possible pattern */
-
 .pattern-green {
   background: #d8f0df;
   color: #0f5f3d;
 }
 
 /* Yellow/gold: clear pattern */
-
 .pattern-yellow {
   background: #fff0bf;
   color: #7a5700;
 }
 
 /* Red/burgundy: dominant pattern */
-
 .pattern-red {
   background: #f4d0d6;
   color: #6b1f35;
@@ -255,6 +357,46 @@ label {
 .spread-panel {
   min-width: 0;
   padding: clamp(24px, 3vw, 42px);
+}
+
+.spread-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 22px 0 34px;
+}
+
+.spread-tab {
+  display: flex;
+  flex: 0 1 310px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-height: 108px;
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.spread-tab-number {
+  font-size: 1rem;
+  opacity: 0.78;
+}
+
+.spread-tab-question {
+  font-family: Courier, serif;
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.spread-tab-tag {
+  display: inline-flex;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border: 1px solid currentColor;
+  font-family: Courier, serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .active-spread-tab {
@@ -267,9 +409,6 @@ label {
 }
 
 .spread-heading {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   gap: 9px;
   margin-bottom: 32px;
   padding-bottom: 26px;
@@ -284,24 +423,43 @@ label {
   letter-spacing: 0.05em;
 }
 
+.spread-question-display {
+  margin: 0;
+  max-width: 950px;
+  color: #fff;
+  font-family: Courier, serif;
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  font-weight: normal;
+  line-height: 1.45;
+}
+
 .spread-tag {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
   min-height: auto;
   padding: 5px 11px;
-  border: 1px solid #a88bb8;
-  font-family: "Courier New", monospace;
   font-size: 0.72rem;
-  font-weight: bold;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+}
+
+.question-editor {
+  width: min(100%, 720px);
+  margin-top: 18px;
 }
 
 .question-editor label {
   display: block;
   margin-bottom: 7px;
   font-size: 1.05rem;
+}
+
+.spread-question-input {
+  width: 100%;
+  min-height: 82px;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid #b893c9;
+  background: #f7f2f8;
+  color: #16131d;
+  font: 1rem/1.45 Courier, serif;
 }
 
 .parent-spread-reference {
@@ -316,6 +474,27 @@ label {
 }
 
 /* Cards now use readable fixed minimum widths and fill available space. */
+.reading-spread .spread-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 245px));
+  gap: 26px;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+  margin: 10px 0 36px;
+}
+
+.card-stack {
+  min-width: 0;
+  gap: 14px;
+}
+
+.spread-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 405px;
+  padding: 13px;
+}
 
 .spread-card-main-button {
   display: flex;
@@ -342,7 +521,6 @@ label {
 
 .spread-card-title {
   margin: 0 0 8px;
-  font-family: "Jersey 10", sans-serif;
   font-size: 1.65rem;
   line-height: 1.05;
 }
@@ -359,6 +537,29 @@ label {
   margin-top: 12px;
   padding: 11px 14px;
   font-size: 1.05rem;
+}
+
+.clarifier-card {
+  margin-left: 12px;
+  transform: none;
+  opacity: 1;
+}
+
+.clarifier-card .spread-card-main-button img {
+  height: 180px;
+}
+
+.clarifier-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 8px;
+  padding: 3px 8px;
+  border: 1px solid #d8b4fe;
+  color: #d8b4fe;
+  font-family: Courier, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .generated-summary {
@@ -378,6 +579,26 @@ label {
   margin: 0;
   font-size: 1.02rem;
   line-height: 1.75;
+}
+
+.spread-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+  margin-top: 26px;
+}
+
+.spread-action-buttons button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 210px;
+  min-height: 54px;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  line-height: 1.15;
 }
 
 @media (max-width: 700px) {
@@ -451,7 +672,6 @@ button,
 
 /* The #reading element is only a wrapper. Making it a grid caused the entire
    reading section to occupy one card-width column. */
-
 #reading.reading-container {
   display: block;
   width: 100%;
@@ -460,100 +680,76 @@ button,
 
 /* One compact navigation tab per spread. The question appears only once,
    in the active spread header below. */
-
 .spread-navigation {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin: 22px 0 34px;
 }
 
 .spread-tab {
-  display: flex;
   flex: 0 0 auto;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-  min-height: 76px;
-  padding: 14px 18px;
-  text-align: left;
   width: auto;
   min-width: 180px;
+  min-height: 76px;
+  padding: 14px 18px;
 }
 
 .spread-tab-number {
   font-size: 1.2rem;
-  opacity: 0.78;
 }
 
 .spread-tab-tag {
-  display: inline-flex;
-  margin-top: 4px;
-  padding: 3px 8px;
-  border: 1px solid currentColor;
   font-family: var(--body-font);
-  font-size: 0.68rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
 }
 
 .spread-tab-question {
-  font-family: Courier, serif;
-  font-size: 0.96rem;
-  line-height: 1.35;
   display: none;
 }
 
+.spread-question-display {
+  max-width: 1000px;
+  font-family: var(--heading-font);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
 .spread-question-input {
-  width: 100%;
-  min-height: 82px;
-  box-sizing: border-box;
-  resize: vertical;
-  padding: 12px 14px;
-  border: 1px solid #b893c9;
-  background: #f7f2f8;
-  color: #16131d;
-  font: 1rem/1.45 Courier, serif;
   font-family: var(--body-font);
   font-size: 1.05rem;
 }
 
 /* Keep cards in horizontal rows until the viewport genuinely becomes narrow. */
+.reading-spread .spread-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 250px));
+  gap: 30px;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+}
+
+.card-stack {
+  width: 100%;
+  min-width: 0;
+}
 
 .spread-card {
-  border: 1px solid #6d5a7c;
-  background: #211b2b;
-  padding: 13px;
-  cursor: pointer;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 405px;
   width: 100%;
 }
 
 /* Action buttons form one spaced row, wrapping only when needed. */
-
 .spread-action-buttons {
   display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: 18px;
-  width: 100%;
-  margin-top: 26px;
   flex-direction: row;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: stretch;
 }
 
 .spread-action-buttons button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 230px;
-  min-height: 54px;
-  padding: 12px 20px;
-  font-size: 1.05rem;
-  line-height: 1.15;
   flex: 0 1 250px;
+  min-width: 230px;
 }
 
 @media (max-width: 760px) {
@@ -579,15 +775,6 @@ button,
 
 body {
   font-family: var(--body-font);
-  background: #16131d;
-  color: #f4edf8;
-  padding: 18px 40px 40px;
-  line-height: 1.5;
-  background-color: #2b1a12;
-  background-image: url("assets/background/raven-background.png");
-  background-repeat: repeat;
-  background-position: top left;
-  background-size: 128px 128px;
 }
 
 p,
@@ -633,24 +820,10 @@ h4,
 
 button {
   font-family: var(--body-font);
-  background: #6d4c7d;
-  color: #f8edf9;
-  border: 1px solid #b893c9;
-  border-radius: 0;
-  padding: 12px 18px;
-  cursor: pointer;
-  letter-spacing: 0.05em;
 }
 
 .spread-question-display {
-  margin: 0;
   max-width: 840px;
-  color: #fff;
-  font-family: var(--heading-font);
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  font-weight: normal;
-  line-height: 1.05;
-  letter-spacing: 0.02em;
 }
 
 .question-editor {
@@ -694,22 +867,15 @@ button {
 }
 
 .reading-spread .spread-table {
-  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(255px, 275px));
   gap: 34px 22px;
-  justify-content: start;
-  align-items: start;
-  width: 100%;
-  margin: 10px 0 36px;
 }
 
 .card-stack {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-  width: 100%;
   align-items: center;
+  width: 100%;
 }
 
 .card-stack > .spread-card {
@@ -793,12 +959,9 @@ button {
 
 .clarifier-card {
   margin-left: 0;
-  transform: none;
-  border-color: #b893c9;
-  transform-origin: top left;
-  opacity: 1;
   min-height: auto;
   padding: 8px;
+  border-color: #b893c9;
 }
 
 .clarifier-card .spread-card-main-button {
@@ -817,8 +980,8 @@ button {
 }
 
 .clarifier-card .spread-card-orientation {
-  font-size: 0.82rem;
   margin-top: 6px;
+  font-size: 0.82rem;
 }
 
 .clarifier-card .remove-card-button {
@@ -828,16 +991,8 @@ button {
 }
 
 .clarifier-badge {
-  display: inline-flex;
-  align-self: flex-start;
   margin-bottom: 6px;
-  padding: 3px 8px;
-  border: 1px solid #d8b4fe;
-  color: #d8b4fe;
-  font-family: Courier, serif;
   font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 @media (max-width: 900px) {
@@ -866,15 +1021,14 @@ button {
   }
 
   .clarifier-node,
-    .single-clarifier .clarifier-node {
+  .single-clarifier .clarifier-node {
     flex-basis: 100%;
   }
 }
 
-/* Animated pixel-art Enter button */
+/* Animated pixel-art Enter button                                             */
 
 /* This overrides the regular .entry-area button rules for this image button. */
-
 .entry-area .pixel-enter-button {
   width: 220px;
   height: 220px;
@@ -913,6 +1067,7 @@ button {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
   user-select: none;
@@ -973,7 +1128,7 @@ section.entry-area button.pixel-enter-button > img#enterButtonImage {
   }
 }
 
-/* Follow-up question prompts */
+/* Follow-up question prompts                                                  */
 
 .follow-up-prompt-box {
   margin-top: 18px;
@@ -1152,6 +1307,7 @@ body.follow-up-modal-active {
   height: 180px;
   max-width: none;
   object-fit: contain;
+  image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
   user-select: none;
@@ -1169,7 +1325,7 @@ body.follow-up-modal-active {
   }
 
   .follow-up-enter-button.pixel-enter-button,
-    .follow-up-enter-button.pixel-enter-button img {
+  .follow-up-enter-button.pixel-enter-button img {
     width: 160px;
     height: 160px;
     min-width: 160px;
@@ -1177,7 +1333,7 @@ body.follow-up-modal-active {
   }
 }
 
-/* Multi-page navigation + Card Library */
+/* Multi-page navigation + Card Library                                       */
 
 .site-nav {
   display: flex;
@@ -1489,8 +1645,8 @@ body.follow-up-modal-active {
   }
 
   .library-status-row,
-    .library-detail-heading,
-    .library-detail-grid {
+  .library-detail-heading,
+  .library-detail-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1513,7 +1669,7 @@ body.follow-up-modal-active {
   }
 }
 
-/* Home page */
+/* Home page                                                                  */
 
 .home-page {
   min-height: 100vh;
@@ -1606,8 +1762,7 @@ body.follow-up-modal-active {
   }
 }
 
-/* Three-page consistency */
-
+/* Three-page consistency                                                      */
 .reader-header {
   margin: 0 0 22px;
 }
@@ -1616,7 +1771,7 @@ body.follow-up-modal-active {
   margin: 0;
 }
 
-/* Reader notes */
+/* Reader notes                                                                */
 
 .spread-notes-panel {
   width: 100%;
